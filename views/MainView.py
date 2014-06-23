@@ -5,13 +5,16 @@ class mainView(wx.Frame):
         wx.Frame.__init__(self, parent, title="Main View") 
         pnl = wx.Panel(self)
         width = 400
-        height = 250        
-        self.groupBox = wx.StaticBox(pnl, label="feedback", pos=(4, 5), size=(width, height + 40))
-        sizer = wx.GridBagSizer(hgap=3, vgap=5)
-        self.comment = wx.TextCtrl(pnl,style=wx.TE_READONLY| wx.TE_MULTILINE, size = wx.Size(width -25,height))
-                    
-        sizer.Add(self.comment, pos=(1,1),flag=wx.ALL, border=5)    
-        pnl.SetSizer(sizer)
+        height = 250
+        
+        self.projectName = wx.StaticText(pnl,pos=(10, 5))        
+        self.groupBox = wx.StaticBox(pnl, label="feedback", pos=(4, 30), size=(width, height + 40))
+        staticBoxSizer = wx.StaticBoxSizer(self.groupBox,orient = wx.VERTICAL)
+        self.comment = wx.TextCtrl(pnl,style=wx.TE_READONLY| wx.TE_MULTILINE,pos=(14,50) ,size = wx.Size(width -25,height))
+        staticBoxSizer.Add(self.comment)
+        
+        self.ratings = wx.StaticText(pnl,pos=(10, height+75))        
+
         self.SetSize((600 , 500))
         self.Centre()    
 
@@ -19,4 +22,8 @@ class mainView(wx.Frame):
         self.comment.SetValue(str(text))
     def setTitle(self,text):
         self.groupBox.SetLabel(text)
+    def setProjectName(self,text):
+        self.projectName.SetLabel("App: "+text)
+    def setRatings(self,text):
+        self.ratings.SetLabel("Stars: "+str(text))
         
