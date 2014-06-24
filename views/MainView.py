@@ -5,9 +5,16 @@ class mainView(wx.Frame):
         wx.Frame.__init__(self, parent, title="Main View") 
         pnl = wx.Panel(self)
         width = 400
-        height = 250
+        height = 250        
         wx.Button(pnl, id=1, label='Next', pos=(width + 40, 35))
         wx.Button(pnl, id=2, label='Prev', pos=(width + 40, 70))
+#-----------------Radio Buttons--------------------------------------------------------- 
+        labelBox = wx.StaticBox(pnl, label="Label", pos=(width+25, 110), size=(180, height-40))
+        self.bug_rb = wx.RadioButton(pnl, label='Bug Report', pos=(width+40, 135),style=wx.RB_GROUP)
+        self.feature_rb = wx.RadioButton(pnl, label='Feature Request', pos=(width+40, 170))
+        self.feedback_rb = wx.RadioButton(pnl, label='Feature Feedback', pos=(width+40, 205))
+        self.other_rb = wx.RadioButton(pnl, label='Other', pos=(width+40, 240))
+        self.other_label = wx.TextCtrl(pnl,style= wx.TE_MULTILINE,pos=(width+40,265) ,size = wx.Size(150,40))
 
         self.projectName = wx.StaticText(pnl,pos=(10, 5))        
         self.groupBox = wx.StaticBox(pnl, label="feedback", pos=(4, 30), size=(width, height + 40))
@@ -17,7 +24,7 @@ class mainView(wx.Frame):
 
         self.ratings = wx.StaticText(pnl,pos=(10, height+75))        
 
-        self.SetSize((600 , 500))
+        self.SetSize((630 , 400))
         self.Centre()    
 
     def setComment(self,text):
