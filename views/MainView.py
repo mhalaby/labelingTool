@@ -6,13 +6,15 @@ class mainView(wx.Frame):
         pnl = wx.Panel(self)
         width = 400
         height = 250
-        
+        wx.Button(pnl, id=1, label='Next', pos=(width + 40, 35))
+        wx.Button(pnl, id=2, label='Prev', pos=(width + 40, 70))
+
         self.projectName = wx.StaticText(pnl,pos=(10, 5))        
         self.groupBox = wx.StaticBox(pnl, label="feedback", pos=(4, 30), size=(width, height + 40))
         staticBoxSizer = wx.StaticBoxSizer(self.groupBox,orient = wx.VERTICAL)
         self.comment = wx.TextCtrl(pnl,style=wx.TE_READONLY| wx.TE_MULTILINE,pos=(14,50) ,size = wx.Size(width -25,height))
         staticBoxSizer.Add(self.comment)
-        
+
         self.ratings = wx.StaticText(pnl,pos=(10, height+75))        
 
         self.SetSize((600 , 500))
@@ -26,4 +28,6 @@ class mainView(wx.Frame):
         self.projectName.SetLabel("App: "+text)
     def setRatings(self,text):
         self.ratings.SetLabel("Stars: "+str(text))
+
+        
         
