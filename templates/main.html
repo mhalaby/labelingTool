@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<link
+	href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
+	rel="stylesheet">
+<script
+	src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+<link rel="stylesheet" type="text/css"
+	href="{{ url_for('static', filename='main.css') }}"">
+<script type=text/javascript>
+	$(function() {
+		$('button#next').bind('click', function() {
+			$.getJSON('/next', {
+				x : ""
+			}, function(data) {
+				update(data);
+			});
+			return false;
+		});
+		function update(data) {
+			$("#comment").text(data.comment);
+			$("#stars").text(data.stars);
+			$("#title").text(data.title);
+	
+		}
+		$('button#prev').bind('click', function() {
+			$.getJSON('/prev', {
+				x : ""
+			}, function(data) {
+				update(data);
+			});
+			return false;
+		});
+	});
+</script>
+</head>
+<body>
+	<div class="container">
+		<div class="page-header">
+			<h3>
+				A tool for labeling feedbacks <span class="label label-danger">Beta</span>
+				<div class="btn-group menu-bar">
+				
+					<button type="button" href="javascript:void();" id="save"
+						class="btn btn-default">Save
+						 <span class="glyphicon glyphicon-save"></span>
+					</button>
+					<button type="button" href="javascript:void();" id="logout"
+						class="btn btn-default "> Logout
+						<span class="glyphicon glyphicon-log-out"></span>
+					</button>
+				</div>
+			</h3>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<span class="dropdown"> <a href="#" data-toggle="dropdown"
+						class="dropdown-toggle">Project <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="#">Angry Bird</a></li>
+							<li><a href="#">Dropbox</a></li>
+						</ul>
+					</span>
+
+				</h3>
+
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-md-7">
+						<div class="panel panel-default comment">
+							<div class="panel-body">
+								<h4 id="title">{{ title }}</h4>
+								 <span id="comment">{{ comment }}</span>
+							</div>
+						</div>
+						<div class="row btn-bar">
+							<div class="col-md-9">
+								<div class="btn-group">
+									<button type="button" href="javascript:void();" id="prev"
+										class="btn btn-default">
+										<span class="glyphicon glyphicon-chevron-left"></span>
+									</button>
+									<button type="button" href="javascript:void();" id="next"
+										class="btn btn-default">
+										<span class="glyphicon glyphicon-chevron-right"></span>
+									</button>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<h5>
+									<span class="glyphicon glyphicon-star"></span> Ratings: <span id="stars">{{stars}}
+									</span>
+								</h5>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-4">
+						<div class="panel panel-default">
+							<div class="panel-body">
+								<h5 class="input-field-header">Please choose the label:</h5>
+								<div class="input-group">
+									<input id="bug" type="checkbox"> <span
+										class="input-field">Bug Report</span></input> </br> <input id="featureReq"
+										type="checkbox"> <span class="input-field">Feature
+										Request</span></input> </br> <input id="featureFeed" type="checkbox"> <span
+										class="input-field">Feature Feedback</span></input> </br> <input
+										id="otherCheck" type="checkbox"> <span
+										class="input-field">Other</span></input> </br> <input id="other"
+										type="text" class="form-control">
+								</div>
+								</br>
+								<h5 class="sentiment-field-header">Please choose the
+									Sentiment:</h5>
+								<ul class="pagination">
+									<li><a>1</a></li>
+									<li><a>2</a></li>
+									<li><a>3</a></li>
+									<li><a>4</a></li>
+									<li><a>5</a></li>
+								</ul>
+							</div>
+
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+
+			</form>
+		</div>
+</body>
+</html>

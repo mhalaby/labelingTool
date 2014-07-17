@@ -10,8 +10,11 @@ class reviews(baseModel.BaseModel):
     comment = TextField()
     project = ForeignKeyField(projects)
     
-    def getReviewsByProjectName(self,name):
+    def getReviewsByProjectName(self, name):
         reviews = []
         for review in self.select().join(projects).where(projects.name == name):
             reviews.append(review)
         return reviews
+    
+    def __getitem__(self,key):
+        return self

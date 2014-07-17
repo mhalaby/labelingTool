@@ -1,0 +1,26 @@
+.comment {
+	height:250px;
+}
+
+.input-field {
+	padding-left: 6px;
+	color:#428bca;
+}
+
+.input-field-header {
+	margin-bottom: 6px;
+	margin-top: 1px;
+}
+
+.sentiment-field-header {
+	margin-bottom: -11px;
+}
+.btn-bar{
+	margin-top:-13px;
+	
+}
+
+.menu-bar{
+	float:right;
+	
+}
