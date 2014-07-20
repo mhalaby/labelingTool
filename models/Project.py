@@ -10,3 +10,13 @@ class projects(baseModel.BaseModel):
         for p in self.select():
             projects.append(p)
         return projects
+    def getProjectNameById(self,id):
+        result = []
+        for p in projects.select().where(projects.project_id == id):
+            result.append(p)
+        return result[0].name
+    def getProjectIdByName(self,name):
+        result = []
+        for p in projects.select().where(projects.name == name):
+            result.append(p)
+        return result[0].project_id

@@ -7,18 +7,14 @@ from models.Project import projects
 
 class Strat:
     def __init__(self):
-        self.reviews = reviews()
-        self.projects = projects()
         self.review_id = 0
         self.newSampleSize= 400
+        self.projects = projects()
 #------------------------------------------------------------------------------ 
-        self.currentProject = self.projects.getProjects()[1].name 
-        self.reviews = self.loadReviews()
-        strat = self.calculateStrata(self.reviews,self.newSampleSize)        
-        newSampleList = self.createNewSampleReviews(self.reviews,strat)
+       
         
-    def loadReviews(self):
-        return self.reviews.getReviewsByProjectName(self.currentProject)
+    def loadReviews(self,projectName):
+        return self.reviews.getReviewsByProjectName(projectName)
 #------------------------------------------------------------------------------ 
 # returns an array of five items which contains the number
 # sample based on each rating
@@ -52,4 +48,12 @@ class Strat:
             i= i+1
         return l
             
-s = Strat()
+    def runStrat(self , projectId):
+        self.reviews = reviews()
+        currentProject = self.projects.getProjectNameById(projectId)
+        self.reviews = self.loadReviews(currentProject)
+        strat = self.calculateStrata(self.reviews,self.newSampleSize)     
+        print "strat ", strat   
+        self.newSampleList = self.createNewSampleReviews(self.reviews,strat)
+        print "new sample size ", len(self.newSampleList[0]) +len(self.newSampleList[1])+len(self.newSampleList[2])+len(self.newSampleList[3])+len(self.newSampleList[4]) 
+        return self.newSampleList

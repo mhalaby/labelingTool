@@ -15,6 +15,11 @@ class reviews(baseModel.BaseModel):
         for review in self.select().join(projects).where(projects.name == name):
             reviews.append(review)
         return reviews
-    
+    def getReivewById(self,r_id):
+        rs = []
+        for review in reviews.select().where(reviews.review_id == r_id):
+            rs.append(review)
+        return rs[0]
     def __getitem__(self,key):
         return self
+    
