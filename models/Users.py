@@ -1,5 +1,6 @@
 import peewee
 from peewee import *
+from models.BaseModel import BaseModel
 import BaseModel as baseModel
         
 class User(baseModel.BaseModel):
@@ -14,16 +15,25 @@ class User(baseModel.BaseModel):
         self.authenticate = True
                
     def getUserById(self,uid):
-        rs = []
-        for u in User.select().where(User.user_id == uid):
-            rs.append(u)
-        return rs[0]
+        try:
+         # do your database stuff
+            rs = []
+            for u in User.select().where(User.user_id == uid):
+                rs.append(u)
+            return rs[0]
+        except:
+            BaseModel()._connect()
+            self.getUserById(uid)
     
     def getUserbyUsername(self,username):
-        rs = []
-        for u in User.select().where(User.username == username):
-            rs.append(u)        
-        if not rs :
-            return rs            
-        return rs[0]
-    
+        try:
+         # do your database stuff
+            rs = []
+            for u in User.select().where(User.username == username):
+                rs.append(u)        
+            if not rs :
+                return rs            
+            return rs[0]
+        except:
+            BaseModel()._connect()
+            self.getUserbyUsername(username)

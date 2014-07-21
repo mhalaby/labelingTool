@@ -1,12 +1,12 @@
-from flask import Flask,request, redirect,jsonify,render_template,url_for
+from flask import Flask,request, redirect,jsonify,render_template,url_for,make_response
 from controllers.controller import Controller
 from models.Users import User
-
+from controllers.Session import Session
+from controllers.SessionManager import SessionManager
 app = Flask(__name__)
-c = Controller()
-user = User()
-Session = {}
 
+sessionManager = SessionManager()
+currentSession = Session(0,None,None)
 @app.route('/')
 def gotoLogin():
     return render_template('login.html')
@@ -16,29 +16,34 @@ def index():
     return render_template('login.html')
 
 @app.route('/sign_in', methods=['POST', 'GET'])
-def signIn():     
+def signIn():                 
     result =  validate_user(request.form.get('username'), request.form.get('password'))
     if result:
-        return redirect(url_for('view'))        
+        resp = make_response(redirect(url_for('view')) )
+        resp.set_cookie('username',request.form.get('username'))
+        return resp
     return render_template('login.html',error="Wrong username or password!")
 
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():
-    Session.clear()
-    print Session
+    print sessionManager.sessions
     return redirect(url_for('index'))
 
 @app.route('/main')
 def view():
-    if not Session:
+    currentUser = request.cookies.get('username')
+    print 'cookie',currentUser
+    print 'print Sessions' ,sessionManager.sessions
+    print 'curr session', sessionManager.getSessionByUser(currentUser)
+    if not currentUser or not sessionManager.getSessionByUser(currentUser):
         return redirect(url_for('index'))
-    if Session['user'].getAuthenticate():
-        c.setUserId(Session['user'].user_id)
-        c.init()
+    currentSession = sessionManager.getSessionByUser(currentUser)
+    if currentSession.getSessionUser().getAuthenticate():  
+        c = currentSession.getSessionController() 
         l = c.getReivew()    
         r = l.review
         projects = c.getProjects()    
-        return render_template('main.html', username=Session['user'].username, comment=r.comment , title= r.title, stars= r.stars, projects = projects, currentProject = c.getCurrentProject(),
+        return render_template('main.html', username= currentSession.getSessionUser().username, comment=r.comment , title= r.title, stars= r.stars, projects = projects, currentProject = c.getCurrentProject(),
                            bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request, other = l.other, sentiment = l.sentiment)
     else:
         return redirect(url_for('index'))
@@ -52,8 +57,9 @@ def saving():
 @app.route('/next')
 def next():   
     print 'next', request.args.get('sentiment'),convertSentiment(request.args.get('sentiment'))
-
-    save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other'),convertSentiment(request.args.get('sentiment')))    
+    
+    save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other'),convertSentiment(request.args.get('sentiment')))
+    c = getCurrentController()    
     c.OnNext()    
     l = c.getReivew()    
     r = l.review
@@ -64,6 +70,7 @@ def next():
 @app.route('/prev')
 def prev():
     save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other'),convertSentiment(request.args.get('sentiment')))
+    c = getCurrentController()
     c.OnPrev()    
     l = c.getReivew()    
     r = l.review
@@ -72,7 +79,7 @@ def prev():
 @app.route('/changeProject')
 def changeProject():
     save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other'),convertSentiment(request.args.get('sentiment')))
-
+    c = getCurrentController()
     currProject = request.args.get('currProject')
     c.setCurrentProject(currProject)
     l = c.getReivew()    
@@ -102,19 +109,37 @@ def validate_user(username,password):
     else:
         if(u.password == password):
             u.setAuthenticate()  
-            Session['user']=u
+#------------------------------------------------------------------------------ 
+# Create New Session     
+            newController= Controller()                 
+            newController.setUserId(u.user_id)
+            newController.init()
+            sessionManager.createNewSession(u,newController)            
             return True
         else:
             return False
+def removekey(d, key):
+    r = dict(d)
+    del r[key]
+    return r
 
-def save(bug,ff,fr,other,sentiment):  
-    c.setBugReport(convertBool(bug))
-    c.setFeatureFeedback(convertBool(ff))
-    c.setFeatureRequest(convertBool(fr))
-    c.setOther(other)
-    c.setSentiment(convertSentiment(sentiment))
-    c.saveLabeledReview()
+def getCurrentController():
+    currentSession = sessionManager.getSessionByUser(request.cookies.get('username'))
+    return currentSession.getSessionController()
+def save(bug,ff,fr,other,sentiment): 
+    print sessionManager.sessions
+    for s in sessionManager.sessions:
+        print s.user.username, " ",s.c.review_id
     
+    currentController = getCurrentController()
+    print "saving control", currentController.userId, request.cookies.get('username')
+    currentController.setBugReport(convertBool(bug))
+    currentController.setFeatureFeedback(convertBool(ff))
+    currentController.setFeatureRequest(convertBool(fr))
+    currentController.setOther(other)
+    currentController.setSentiment(convertSentiment(sentiment))
+    currentController.saveLabeledReview()
+
 
 if __name__ == '__main__':
     app.run(debug=True)

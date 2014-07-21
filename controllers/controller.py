@@ -1,7 +1,10 @@
 from models.Review import reviews
 from models.Project import projects
+from models.BaseModel import BaseModel
+
 from models.LabeledReviews import labeledReview
 from controllers.Strat import Strat
+import peewee
 
 class Controller():
 
@@ -11,12 +14,18 @@ class Controller():
         self.review_id = 0
         self.userId = 0
   
-    def init(self):
-        if not self.reviews.doesUserExist(self.getUserId()):
-            self.runStrat()
-        self.currentProject = self.projects.getProjects()[0].name
-        self.rs = self.reviews.getLabeledReviewsByUserId(self.getUserId(), self.projects.getProjectIdByName(self.currentProject))
-   
+    def init(self):        
+        try:
+            # do your database stuff
+            if not self.reviews.doesUserExist(self.getUserId()):
+                self.runStrat()
+            self.currentProject = self.projects.getProjects()[0].name
+            self.rs = self.reviews.getLabeledReviewsByUserId(self.getUserId(), self.projects.getProjectIdByName(self.currentProject))
+        except:
+            BaseModel()._connect()
+            print "ERROR reconnecting..."
+            self.init()
+            
     def setUserId(self,userId):
         self.userId = userId
    
@@ -44,7 +53,8 @@ class Controller():
         self.review_id = 0
         self.rs = self.reviews.getLabeledReviewsByUserId(self.userId, self.projects.getProjectIdByName(currentProjectName))
         
-    def saveLabeledReview(self):   
+    def saveLabeledReview(self): 
+        print 'savelabel', self.rs[self.review_id].user_id ,"user id",  self.userId,self.rs[self.review_id].review_id
         self.rs[self.review_id].save()
         
     def setBugReport(self, val):
