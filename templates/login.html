@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<link
+	href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
+	rel="stylesheet">
+<script
+	src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+<link rel="stylesheet" type="text/css"
+	href="{{ url_for('static', filename='main.css') }}">
+</head>
+<body>
+
+
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-6 col-md-4 col-md-offset-4">
+				<h1 class="text-center login-title">Sign in to Label Some Data</h1>
+				<div class="account-wall">
+					<img class="profile-img"
+						src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120"
+						alt="">
+					<form class="form-signin"  action="/sign_in" method="post" name="sign_in">
+						<span id="error">{{error}}</span> <input name="username" id="username" type="text"
+							class="form-control" placeholder="Username" required autofocus>
+						<input name="password" id="password" type="password" class="form-control"
+							placeholder="Password" required>
+						<button id="submit" class="btn btn-lg btn-primary btn-block"
+							type="submit" >Sign in</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

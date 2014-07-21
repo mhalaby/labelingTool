@@ -1,21 +1,27 @@
-from flask import Flask
 from models.Review import reviews
 from models.Project import projects
 from models.LabeledReviews import labeledReview
 from controllers.Strat import Strat
 
-app = Flask(__name__)
-
-
 class Controller():
+
     def __init__(self):
         self.reviews = labeledReview()
         self.projects = projects()
-        self.userId = 1
         self.review_id = 0
+        self.userId = 0
+  
+    def init(self):
+        if not self.reviews.doesUserExist(self.getUserId()):
+            self.runStrat()
         self.currentProject = self.projects.getProjects()[0].name
-        self.rs = self.reviews.getLabeledReviewsByUserId(self.userId, self.projects.getProjectIdByName(self.currentProject))
+        self.rs = self.reviews.getLabeledReviewsByUserId(self.getUserId(), self.projects.getProjectIdByName(self.currentProject))
    
+    def setUserId(self,userId):
+        self.userId = userId
+   
+    def getUserId(self):
+        return self.userId
     def OnNext(self):
         self.review_id += 1 
     
@@ -38,7 +44,7 @@ class Controller():
         self.review_id = 0
         self.rs = self.reviews.getLabeledReviewsByUserId(self.userId, self.projects.getProjectIdByName(currentProjectName))
         
-    def saveLabeledReview(self):        
+    def saveLabeledReview(self):   
         self.rs[self.review_id].save()
         
     def setBugReport(self, val):
@@ -70,13 +76,14 @@ class Controller():
                 reviews_per_rating = result[rating]                
                 for review in reviews_per_rating:
                     l = labeledReview()
+                    l.bug_report = 0
+                    l.feature_feedback=0
+                    l.feature_request = 0
+                    l.sentiment = -1
+                    l.other = ""                
                     l.project_id = i
                     l.review_id = review.review_id
-                    l.user_id = 1
+                    l.user_id = self.getUserId()
                     l.save()
-            
-#---------------------------------------------------- if __name__ == '__main__':
-    #------------------------------------------------------- app = wx.App(False)
-    #---------------------------------------------- controller = Controller(app)
-    #------------------------------------------------------------ app.MainLoop()
+
 

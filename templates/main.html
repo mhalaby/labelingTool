@@ -9,119 +9,131 @@
 	src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 
 <link rel="stylesheet" type="text/css"
-	href="{{ url_for('static', filename='main.css') }}"">
+	href="{{ url_for('static', filename='main.css') }}">
 <script type=text/javascript>
 	$(function() {
 		var selectedSentiment;
+		// 		$('#logout').bind('click', function() {
+		// 			$.getJSON('/logout', {
+		// 				username:$("#user").text()
+		// 			}, function(data) {
+
+		// 			});
+		// 			return false;
+		// 		});
 		$('#save').bind('click', function() {
 			$.getJSON('/save', {
-				bug:$("#bug").prop('checked'),
-				fr:$("#featureReq").prop('checked'),
-				ff:$("#featureFeed").prop('checked'),
-				other:$("#other").val(),
-				sentiment:selectedSentiment,
+				bug : $("#bug").prop('checked'),
+				fr : $("#featureReq").prop('checked'),
+				ff : $("#featureFeed").prop('checked'),
+				other : $("#other").val(),
+				sentiment : selectedSentiment,
 			}, function(data) {
-			
+
 			});
 			return false;
 		});
 		$('button#next').bind('click', function() {
 			$.getJSON('/next', {
-				bug:$("#bug").prop('checked'),
-				fr:$("#featureReq").prop('checked'),
-				ff:$("#featureFeed").prop('checked'),
-				other:$("#other").val(),
-				sentiment:selectedSentiment,
+				bug : $("#bug").prop('checked'),
+				fr : $("#featureReq").prop('checked'),
+				ff : $("#featureFeed").prop('checked'),
+				other : $("#other").val(),
+				sentiment : selectedSentiment,
 			}, function(data) {
 				update(data);
 			});
 			return false;
 		});
-		
-		$('a#sentiment').bind('click', function(e) {	
 
-			$('a#sentiment').parent().removeClass('active');
-			$("a[name = '"+e.target.name+"']").parent().toggleClass('active');
-			selectedSentiment = e.target.name;
-			});
-		
+		$('a#sentiment').bind(
+				'click',
+				function(e) {
+
+					$('a#sentiment').parent().removeClass('active');
+					$("a[name = '" + e.target.name + "']").parent()
+							.toggleClass('active');
+					selectedSentiment = e.target.name;
+				});
+
 		function update(data) {
 			$("#comment").text(data.comment);
 			$("#stars").text(data.stars);
 			$("#title").text(data.title);
-			$("#bug").prop('checked',data.bug);
-			$("#featureFeed").prop('checked',data.ff);
-			$("#featureReq").prop('checked',data.fr);	
+			$("#bug").prop('checked', data.bug);
+			$("#featureFeed").prop('checked', data.ff);
+			$("#featureReq").prop('checked', data.fr);
 			console.log(data.sentiment)
- 			if(data.sentiment)
-			{				
- 				$('a#sentiment').parent().removeClass('active');
-				$("a[name = '"+data.sentiment+"']").parent().toggleClass('active');
+			if (data.sentiment) {
+				$('a#sentiment').parent().removeClass('active');
+				$("a[name = '" + data.sentiment + "']").parent().toggleClass(
+						'active');
 				selectedSentiment = data.sentiment;
-			}else{
+			} else {
 				$('a#sentiment').parent().removeClass('active');
 				selectedSentiment = null;
-			}	
+			}
 
-			if(data.other){
-				$("#otherCheck").prop('checked',true);
+			if (data.other) {
+				$("#otherCheck").prop('checked', true);
 				$("#other").val(data.other);
-			}else{
+			} else {
 				$("#other").val('');
 
-				$("#otherCheck").prop('checked',false);	
+				$("#otherCheck").prop('checked', false);
 			}
-			
+
 		}
 		$('button#prev').bind('click', function() {
 			$.getJSON('/prev', {
-				bug:$("#bug").prop('checked'),
-				fr:$("#featureReq").prop('checked'),
-				ff:$("#featureFeed").prop('checked'),
-				other:$("#other").val(),
-				sentiment:selectedSentiment,
+				bug : $("#bug").prop('checked'),
+				fr : $("#featureReq").prop('checked'),
+				ff : $("#featureFeed").prop('checked'),
+				other : $("#other").val(),
+				sentiment : selectedSentiment,
 			}, function(data) {
 				update(data);
 			});
 			return false;
 		});
-	
+
 		$('a#link').bind('click', function(e) {
 			$.getJSON('/changeProject', {
 				currProject : e.target.name,
-				bug:$("#bug").prop('checked'),
-				fr:$("#featureReq").prop('checked'),
-				ff:$("#featureFeed").prop('checked'),
-				other:$("#other").val(),
-				sentiment:selectedSentiment
+				bug : $("#bug").prop('checked'),
+				fr : $("#featureReq").prop('checked'),
+				ff : $("#featureFeed").prop('checked'),
+				other : $("#other").val(),
+				sentiment : selectedSentiment
 			}, function(data) {
 				$("span#currentProject").text(data.currentProject);
 				update(data);
 			});
 			return false;
 		});
-		function convertToBool(val){
-			if(val=='True')
+
+		function convertToBool(val) {
+			if (val == 'True')
 				return true
-			if(val == 'NULL' || val == 'False'|| val == 'None')
+			if (val == 'NULL' || val == 'False' || val == 'None')
 				return false
 		}
-		(function assignVals(){			
-			$("#bug").prop('checked',convertToBool('{{bug}}'));	
-			$("#featureFeed").prop('checked',convertToBool('{{ff}}'));
-			$("#featureReq").prop('checked',convertToBool('{{fr}}'));	
+		(function assignVals() {
+			$("#bug").prop('checked', convertToBool('{{bug}}'));
+			$("#featureFeed").prop('checked', convertToBool('{{ff}}'));
+			$("#featureReq").prop('checked', convertToBool('{{fr}}'));
 			selectedSentiment = '{{sentiment}}';
 			$("a[name = '{{sentiment}}']").parent().toggleClass('active');
-			if('{{other}}'){
-				$("#otherCheck").prop('checked',true);
+			if ('{{other}}') {
+				$("#otherCheck").prop('checked', true);
 				$("#other").val('{{other}}');
-			}else{
-				$("#otherCheck").prop('checked',false);	
+			} else {
+				$("#otherCheck").prop('checked', false);
 			}
 		})();
-	
+
 	});
-	</script>
+</script>
 </head>
 <body>
 	<div class="container">
@@ -129,16 +141,20 @@
 			<h3>
 				A tool for labeling feedbacks <span class="label label-danger">Beta</span>
 				<div class="btn-group menu-bar">
-
+					<form class="form" action="/logout" method="post" name="logout">
+						
+						<button  type="submit" href="javascript:void();" id="logout"
+							class="btn btn-default form-logout">
+							Logout <span class="glyphicon glyphicon-log-out"></span>
+						</button>
+					</form>
 					<button type="button" href="javascript:void();" id="save"
-						class="btn btn-default">
+						class="btn btn-default form-save">
 						Save <span class="glyphicon glyphicon-save"></span>
 					</button>
-					<button type="button" href="javascript:void();" id="logout"
-						class="btn btn-default ">
-						Logout <span class="glyphicon glyphicon-log-out"></span>
-					</button>
+				
 				</div>
+				<span id="user">{{username}}</span>
 			</h3>
 		</div>
 		<div class="panel panel-default">
@@ -148,11 +164,10 @@
 						class="dropdown-toggle">Project <b class="caret"></b></a>
 						<ul class="dropdown-menu">
 							{% for p in projects %}
-								<li ><a href="javascript:void();" name="{{p.name}}" id="link"> {{ p.name }}</a></li> 
-							{% endfor %}
+							<li><a href="javascript:void();" name="{{p.name}}"
+								id="link"> {{ p.name }}</a></li> {% endfor %}
 						</ul>
-					</span>
-					<span id="currentProject">{{currentProject}}</span>					
+					</span> <span id="currentProject">{{currentProject}}</span>
 				</h3>
 
 			</div>

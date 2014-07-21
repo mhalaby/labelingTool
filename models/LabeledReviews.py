@@ -22,6 +22,14 @@ class labeledReview(baseModel.BaseModel):
             labeledReview.append(l)
         return labeledReview
     
+    def doesUserExist(self, userId):
+        result = []        
+        for l in labeledReview.select().join(reviews).where((labeledReview.user_id == userId)):
+            result.append(l)
+        if len(result) > 0 :
+            return True
+        return False
+    
     def getLabeledReviewsByUserId(self, userId, projectId):
         result = []        
         for l in labeledReview.select().join(reviews).where((labeledReview.user_id == userId) & (labeledReview.project_id == projectId)):
