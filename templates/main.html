@@ -139,7 +139,7 @@
 	<div class="container">
 		<div class="page-header">
 			<h3>
-				A tool for labeling feedbacks <span class="label label-danger">Beta</span>
+				A tool for labeling feedback <span class="label label-danger">Beta</span>
 				<div class="btn-group menu-bar">
 					<form class="form" action="/logout" method="post" name="logout">
 						
@@ -205,7 +205,7 @@
 					<div class="col-md-5">
 						<div class="panel panel-default">
 							<div class="panel-body">
-								<h5 class="input-field-header">Please choose the label:</h5>
+								<h5 class="input-field-header">Choose the appropriate tag(s):</h5>
 								<div class="input-group">
 									<input id="bug" type="checkbox"> <span
 										class="input-field">Bug Report</span></input> </br> <input id="featureReq"
@@ -217,8 +217,8 @@
 										type="text" class="form-control">
 								</div>
 								</br>
-								<h5 class="sentiment-field-header">Please choose the
-									Sentiment:</h5>
+								<h5 class="sentiment-field-header">Choose the
+									sentiment:</h5>
 								<ul class="pagination sentiment">
 									<li><a id="sentiment" name="1">very negative</a></li>
 									<li><a id="sentiment" name="2">negative</a></li>
@@ -232,6 +232,15 @@
 
 					</div>
 
+				</div>
+				<div class="row">
+					<div class = "col-md-7">
+						<div class="progress ">
+		  					<div id = "bar" class="progress-bar progress-striped active"  role="progressbar" style="width: 0%">
+		    					<span class="sr-only">45% Complete</span>
+		  					</div>
+						</div>
+					</div>
 				</div>
 			</div>
 

@@ -12,3 +12,6 @@ class BaseModel(peewee.Model):
     def _connect(self):
         print "connecting"
         db.connect()  
+    def _disconnect(self):
+        print "disconnecting"
+        db.close()  

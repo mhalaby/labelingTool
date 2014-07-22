@@ -1,4 +1,3 @@
-import wx
 import math
 import random
 from itertools import groupby

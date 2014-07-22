@@ -16,7 +16,6 @@ class User(baseModel.BaseModel):
                
     def getUserById(self,uid):
         try:
-         # do your database stuff
             rs = []
             for u in User.select().where(User.user_id == uid):
                 rs.append(u)
@@ -27,7 +26,6 @@ class User(baseModel.BaseModel):
     
     def getUserbyUsername(self,username):
         try:
-         # do your database stuff
             rs = []
             for u in User.select().where(User.username == username):
                 rs.append(u)        

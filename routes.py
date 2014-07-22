@@ -3,10 +3,13 @@ from controllers.controller import Controller
 from models.Users import User
 from controllers.Session import Session
 from controllers.SessionManager import SessionManager
+import HTMLParser
+
 app = Flask(__name__)
 
 sessionManager = SessionManager()
 currentSession = Session(0,None,None)
+htmlParser = HTMLParser.HTMLParser()
 @app.route('/')
 def gotoLogin():
     return render_template('login.html')
@@ -32,9 +35,6 @@ def logout():
 @app.route('/main')
 def view():
     currentUser = request.cookies.get('username')
-    print 'cookie',currentUser
-    print 'print Sessions' ,sessionManager.sessions
-    print 'curr session', sessionManager.getSessionByUser(currentUser)
     if not currentUser or not sessionManager.getSessionByUser(currentUser):
         return redirect(url_for('index'))
     currentSession = sessionManager.getSessionByUser(currentUser)
@@ -43,7 +43,7 @@ def view():
         l = c.getReivew()    
         r = l.review
         projects = c.getProjects()    
-        return render_template('main.html', username= currentSession.getSessionUser().username, comment=r.comment , title= r.title, stars= r.stars, projects = projects, currentProject = c.getCurrentProject(),
+        return render_template('main.html', username= currentSession.getSessionUser().username, comment=htmlParser.unescape(r.comment) , title= htmlParser.unescape(r.title), stars= r.stars, projects = projects, currentProject = c.getCurrentProject(),
                            bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request, other = l.other, sentiment = l.sentiment)
     else:
         return redirect(url_for('index'))
@@ -56,25 +56,22 @@ def saving():
 
 @app.route('/next')
 def next():   
-    print 'next', request.args.get('sentiment'),convertSentiment(request.args.get('sentiment'))
-    
     save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other'),convertSentiment(request.args.get('sentiment')))
     c = getCurrentController()    
-    c.OnNext()    
+    c.onNext()    
     l = c.getReivew()    
     r = l.review
-    print "saved id ", r.review_id,l.feature_feedback,l.sentiment
-    return jsonify(comment= r.comment , title= r.title, stars= r.stars,
+    return jsonify(comment=htmlParser.unescape(r.comment) , title= htmlParser.unescape(r.title), stars= r.stars,
                     bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request, other = l.other, sentiment = l.sentiment) 
 
 @app.route('/prev')
 def prev():
     save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other'),convertSentiment(request.args.get('sentiment')))
     c = getCurrentController()
-    c.OnPrev()    
+    c.onPrev()    
     l = c.getReivew()    
     r = l.review
-    return jsonify(comment= r.comment , title= r.title, stars= r.stars,
+    return jsonify(comment=htmlParser.unescape(r.comment) , title= htmlParser.unescape(r.title), stars= r.stars,
                     bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request, other = l.other, sentiment = l.sentiment)
 @app.route('/changeProject')
 def changeProject():
@@ -84,7 +81,7 @@ def changeProject():
     c.setCurrentProject(currProject)
     l = c.getReivew()    
     r = l.review
-    return jsonify(comment= r.comment , title= r.title, stars= r.stars,currentProject= currProject,
+    return jsonify(comment=htmlParser.unescape(r.comment) , title= htmlParser.unescape(r.title), stars= r.stars,currentProject= currProject,
                     bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request, other = l.other, sentiment = l.sentiment)
 
 def convertBool(val):
@@ -93,7 +90,7 @@ def convertBool(val):
     return False
 
 def convertSentiment(val):
-    if val is 'None':
+    if val is 'None' or val is 'none':
         return -1
     if not val:
         return -1
@@ -127,16 +124,15 @@ def getCurrentController():
     currentSession = sessionManager.getSessionByUser(request.cookies.get('username'))
     return currentSession.getSessionController()
 def save(bug,ff,fr,other,sentiment): 
-    print sessionManager.sessions
     for s in sessionManager.sessions:
         print s.user.username, " ",s.c.review_id
     
     currentController = getCurrentController()
-    print "saving control", currentController.userId, request.cookies.get('username')
     currentController.setBugReport(convertBool(bug))
     currentController.setFeatureFeedback(convertBool(ff))
     currentController.setFeatureRequest(convertBool(fr))
     currentController.setOther(other)
+    currentController.setDone()
     currentController.setSentiment(convertSentiment(sentiment))
     currentController.saveLabeledReview()
 

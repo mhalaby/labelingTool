@@ -1,4 +1,3 @@
-import peewee
 from peewee import *
 import BaseModel as baseModel
 from models.Review import reviews
@@ -15,6 +14,7 @@ class labeledReview(baseModel.BaseModel):
     feature_request = BooleanField()
     feature_feedback = BooleanField()
     other = CharField()
+    done = BooleanField()
     
     def getLabeledReviews(self):
         labeledReview = []
@@ -41,3 +41,11 @@ class labeledReview(baseModel.BaseModel):
         for l in labeledReview.select().join(reviews).where((labeledReview.user_id == userId) & (labeledReview.review_id == reviewId)):
             result.append(l)
         return result    
+
+    def getLastReviewByProjectId(self,userId,projectId):
+        result = []                
+        for l in labeledReview.select().where((labeledReview.user_id == userId) & (labeledReview.done == 1) & (labeledReview.project_id == projectId)):
+            result.append(l)
+        if not result:
+            return None
+        return result[len(result)-1]    
