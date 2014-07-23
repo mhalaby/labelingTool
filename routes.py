@@ -20,7 +20,7 @@ def index():
 
 @app.route('/sign_in', methods=['POST', 'GET'])
 def signIn():                 
-    result =  validate_user(request.form.get('username'), request.form.get('password'))
+    result =  validateUser(request.form.get('username'), request.form.get('password'))
     if result:
         resp = make_response(redirect(url_for('view')) )
         resp.set_cookie('username',request.form.get('username'))
@@ -29,7 +29,7 @@ def signIn():
 
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():
-    print sessionManager.sessions
+    print "Logging out .." , sessionManager.sessions
     return redirect(url_for('index'))
 
 @app.route('/main')
@@ -44,62 +44,71 @@ def view():
         r = l.review
         projects = c.getProjects()    
         return render_template('main.html', username= currentSession.getSessionUser().username, comment=htmlParser.unescape(r.comment) , title= htmlParser.unescape(r.title), stars= r.stars, projects = projects, currentProject = c.getCurrentProject(),
-                           bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request, other = l.other, sentiment = l.sentiment)
+                           bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request, other =decodeInput(l.other), sentiment = l.sentiment, numberOfReviewsPerProject = c.getNumberOfReviewsPerProject(), reviewId =c.getReviewId())
     else:
         return redirect(url_for('index'))
     
      
 @app.route('/save') 
 def saving():
-    save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other'),convertSentiment(request.args.get('sentiment')))
+    isSaved = save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other'),convertInput(request.args.get('sentiment')))
+    if isSaved is False:
+        return jsonify(error="error")
     return jsonify()
 
 @app.route('/next')
 def next():   
-    save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other'),convertSentiment(request.args.get('sentiment')))
+    isSaved = save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other'),convertInput(request.args.get('sentiment')))
+    if isSaved is False:
+        return jsonify(error="error")
     c = getCurrentController()    
     c.onNext()    
     l = c.getReivew()    
     r = l.review
     return jsonify(comment=htmlParser.unescape(r.comment) , title= htmlParser.unescape(r.title), stars= r.stars,
-                    bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request, other = l.other, sentiment = l.sentiment) 
+                    bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request, other = decodeInput(l.other), sentiment = l.sentiment) 
 
 @app.route('/prev')
 def prev():
-    save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other'),convertSentiment(request.args.get('sentiment')))
+    isSaved = save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other'),convertInput(request.args.get('sentiment')))
+    if isSaved is False:
+        return jsonify(error="error")
     c = getCurrentController()
     c.onPrev()    
     l = c.getReivew()    
     r = l.review
     return jsonify(comment=htmlParser.unescape(r.comment) , title= htmlParser.unescape(r.title), stars= r.stars,
-                    bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request, other = l.other, sentiment = l.sentiment)
+                    bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request, other = decodeInput(l.other), sentiment = l.sentiment)
 @app.route('/changeProject')
 def changeProject():
-    save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other'),convertSentiment(request.args.get('sentiment')))
+    save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other'),convertInput(request.args.get('sentiment')))    
     c = getCurrentController()
     currProject = request.args.get('currProject')
     c.setCurrentProject(currProject)
     l = c.getReivew()    
     r = l.review
     return jsonify(comment=htmlParser.unescape(r.comment) , title= htmlParser.unescape(r.title), stars= r.stars,currentProject= currProject,
-                    bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request, other = l.other, sentiment = l.sentiment)
+                    bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request, other =decodeInput(l.other), sentiment = l.sentiment, numberOfReviewsPerProject = c.getNumberOfReviewsPerProject(), reviewId =c.getReviewId())
 
 def convertBool(val):
     if(val == 'true'):
         return True
     return False
 
-def convertSentiment(val):
-    if val is 'None' or val is 'none':
+def convertInput(val):
+    if val == 'None' or val == 'none' or val == None or val == "":
         return -1
     if not val:
         return -1
     else:
         return val
-def decodeSentiment(val):
-    if val == -1:
-        return None
-def validate_user(username,password):  
+
+    
+def decodeInput(val):
+    if val == -1 or val == 'None' or val == None :
+        return ""
+    return val
+def validateUser(username,password):  
     u = User().getUserbyUsername(username)
     if not u:
         return False
@@ -115,27 +124,40 @@ def validate_user(username,password):
             return True
         else:
             return False
-def removekey(d, key):
-    r = dict(d)
-    del r[key]
-    return r
 
 def getCurrentController():
     currentSession = sessionManager.getSessionByUser(request.cookies.get('username'))
     return currentSession.getSessionController()
+
 def save(bug,ff,fr,other,sentiment): 
     for s in sessionManager.sessions:
         print s.user.username, " ",s.c.review_id
-    
+    bug = convertBool(bug)
+    ff = convertBool(ff)
+    fr = convertBool(fr)
+    other = convertInput(other)
+    sentiment = convertInput(sentiment)
+    if not validateInput(bug,ff,fr,other,sentiment):
+        return False    
     currentController = getCurrentController()
-    currentController.setBugReport(convertBool(bug))
-    currentController.setFeatureFeedback(convertBool(ff))
-    currentController.setFeatureRequest(convertBool(fr))
-    currentController.setOther(other)
+    currentController.setBugReport(bug)
+    currentController.setFeatureFeedback(ff)
+    currentController.setFeatureRequest(fr)
+    currentController.setOther(decodeInput(other))
     currentController.setDone()
-    currentController.setSentiment(convertSentiment(sentiment))
+    currentController.setSentiment(sentiment)
     currentController.saveLabeledReview()
+    return True
 
+def validateInput(bug,ff,fr,other,sentiment):
+    print "validating input.. bug ",bug, " ff ", ff, " fr ", fr," other ", other , " sentiment ", sentiment
+    if (((bug is False) and (ff is False) and (fr is False) and  (other == -1)) 
+        or ((sentiment == -1))) :
+        print "validation is false"
+        return False
+    return True
+        
+        
 
 if __name__ == '__main__':
     app.run(debug=True)

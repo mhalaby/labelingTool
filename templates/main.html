@@ -7,20 +7,16 @@
 	rel="stylesheet">
 <script
 	src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script
+	src="//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.2.0/bootbox.min.js"></script>
 
 <link rel="stylesheet" type="text/css"
 	href="{{ url_for('static', filename='main.css') }}">
 <script type=text/javascript>
 	$(function() {
 		var selectedSentiment;
-		// 		$('#logout').bind('click', function() {
-		// 			$.getJSON('/logout', {
-		// 				username:$("#user").text()
-		// 			}, function(data) {
-
-		// 			});
-		// 			return false;
-		// 		});
+		var errorMsg = "<h4><span class='glyphicon glyphicon-exclamation-sign' style='color:red'> </span> Make sure you've selected a tag and a sentiment!</h4>";
+		var timer;
 		$('#save').bind('click', function() {
 			$.getJSON('/save', {
 				bug : $("#bug").prop('checked'),
@@ -29,7 +25,10 @@
 				other : $("#other").val(),
 				sentiment : selectedSentiment,
 			}, function(data) {
-
+				if(data.error == "error") 				
+					bootbox.alert(errorMsg);				
+				else
+					bootbox.alert("<h3> <span class='glyphicon glyphicon-floppy-save'></span> Data saved...</h3>");
 			});
 			return false;
 		});
@@ -41,11 +40,26 @@
 				other : $("#other").val(),
 				sentiment : selectedSentiment,
 			}, function(data) {
-				update(data);
+				if(update(data))
+					addStep(data.numberOfReviewsPerProject)
 			});
 			return false;
 		});
 
+		$('button#prev').bind('click', function() {
+			$.getJSON('/prev', {
+				bug : $("#bug").prop('checked'),
+				fr : $("#featureReq").prop('checked'),
+				ff : $("#featureFeed").prop('checked'),
+				other : $("#other").val(),
+				sentiment : selectedSentiment,
+			}, function(data) {
+				if(update(data))
+				subStep(data.numberOfReviewsPerProject);
+
+			});
+			return false;
+		});
 		$('a#sentiment').bind(
 				'click',
 				function(e) {
@@ -57,6 +71,10 @@
 				});
 
 		function update(data) {
+			if(data.error == "error") {
+				bootbox.alert(errorMsg);
+				return false;
+			}
 			$("#comment").text(data.comment);
 			$("#stars").text(data.stars);
 			$("#title").text(data.title);
@@ -79,23 +97,11 @@
 				$("#other").val(data.other);
 			} else {
 				$("#other").val('');
-
 				$("#otherCheck").prop('checked', false);
 			}
+			return true;
 
 		}
-		$('button#prev').bind('click', function() {
-			$.getJSON('/prev', {
-				bug : $("#bug").prop('checked'),
-				fr : $("#featureReq").prop('checked'),
-				ff : $("#featureFeed").prop('checked'),
-				other : $("#other").val(),
-				sentiment : selectedSentiment,
-			}, function(data) {
-				update(data);
-			});
-			return false;
-		});
 
 		$('a#link').bind('click', function(e) {
 			$.getJSON('/changeProject', {
@@ -108,6 +114,7 @@
 			}, function(data) {
 				$("span#currentProject").text(data.currentProject);
 				update(data);
+				setProgressBar(data.numberOfReviewsPerProject,data.reviewId);
 			});
 			return false;
 		});
@@ -131,7 +138,32 @@
 				$("#otherCheck").prop('checked', false);
 			}
 		})();
+		var $bar = $('#bar');		
 
+		function addStep(value){		    
+			stepWidth = ($(".progress").width() * (100/value) )/100
+			result = $bar.width()   + stepWidth;
+			if($bar.width() >= $(".progress").width())
+				return;
+			$bar.animate({ width: result},80);		   
+		}
+		function subStep(value){	
+			if($bar.width() > 0){
+			    $bastepWidth = ($(".progress").width() * (100/value) )/100
+				result = $bar.width()  - stepWidth;
+			    $bar.animate({ width: result},80);
+			}				
+		}
+		function setProgressBar(numberOfReviews, reviewId) {
+			console.log(numberOfReviews + "  "+ reviewId);
+			stepWidth = ($(".progress").width() * (100/numberOfReviews) )/100
+			$bar.width(0);
+			if($bar.width() >= $(".progress").width())
+				return;
+			console.log("result "+ stepWidth * reviewId);
+			$bar.animate({ width: stepWidth * reviewId},80);
+		}
+		setProgressBar({{numberOfReviewsPerProject}},{{reviewId}});
 	});
 </script>
 </head>
@@ -236,7 +268,7 @@
 				<div class="row">
 					<div class = "col-md-7">
 						<div class="progress ">
-		  					<div id = "bar" class="progress-bar progress-striped active"  role="progressbar" style="width: 0%">
+		  					<div id = "bar" class="bar progress-bar progress-striped active"  role="progressbar" style="width: 0%">
 		    					<span class="sr-only">45% Complete</span>
 		  					</div>
 						</div>

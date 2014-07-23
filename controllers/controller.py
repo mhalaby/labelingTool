@@ -60,6 +60,9 @@ class Controller():
     def getCurrentProjectId(self):
         return self.projects.getProjectIdByName(self.getCurrentProject())
     
+    def getNumberOfReviewsPerProject(self):
+        return len(self.rs) - 1 
+    
     def setCurrentProject(self, currentProjectName):
         try:
             self.currentProject = currentProjectName
@@ -105,7 +108,6 @@ class Controller():
      
     def setLastReviewIndex(self,projectId): 
         self.lastReviewForCurrentProject = self.reviews.getLastReviewByProjectId(self.getUserId(), projectId)
-        print 'last review ', self.lastReviewForCurrentProject.review_id, 'project id ', projectId
         if self.lastReviewForCurrentProject is None:
             self.review_id = 0
         else:           
@@ -116,6 +118,9 @@ class Controller():
             
     def getLastReviewIndex(self,lastElement):        
         return [x.review_id for x in self.rs].index(lastElement.review_id)
+    
+    def getReviewId(self):
+        return self.review_id
         
     def runStrat(self):
         s = Strat()
@@ -138,18 +143,4 @@ class Controller():
                     l.user_id = self.getUserId()
                     l.save()
 
-    def getNextProject(self, currentProject): 
-        projectsIteratable = cycle(self.projectsList)
-        print currentProject      
-        for p in projectsIteratable:
-            if p.name == currentProject:
-                return projectsIteratable.next().name
-            projectsIteratable.next()
-            
-    def getPrevProject(self, currentProject):     
-        temp = self.projectsList[len(self.projectsList) - 1].name
-        for p in self.projectsList:
-            if p.name == currentProject:
-                return temp 
-            temp = p.name
             

@@ -90,7 +90,13 @@
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
 }
-
+.progress .bar {
+    -webkit-transition: none;
+    -moz-transition: none;
+    -ms-transition: none;
+    -o-transition: none;
+    transition: none;
+}​
 .account-wall {
 	margin-top: 20px;
 	padding: 40px 0px 20px 0px;
