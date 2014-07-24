@@ -44,7 +44,7 @@ def view():
         r = l.review
         projects = c.getProjects()    
         return render_template('main.html', username= currentSession.getSessionUser().username, comment=htmlParser.unescape(r.comment) , title= htmlParser.unescape(r.title), stars= r.stars, projects = projects, currentProject = c.getCurrentProject(),
-                           bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request, other =decodeInput(l.other), sentiment = l.sentiment, numberOfReviewsPerProject = c.getNumberOfReviewsPerProject(), reviewId =c.getReviewId())
+                           bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request, other =decodeInput(l.other), sentiment = l.sentiment, numberOfReviewsPerProject = c.getNumberOfReviewsPerProject(), reviewId =c.getReviewId(),totalNumberOfDoneReviews = c.getNumberOfDoneReviews(),totalNumberOfOverallReviews = c.getNumberOfOverallReviews())
     else:
         return redirect(url_for('index'))
     
@@ -54,49 +54,64 @@ def saving():
     isSaved = save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other'),convertInput(request.args.get('sentiment')))
     if isSaved is False:
         return jsonify(error="error")
-    return jsonify()
+    controller = getCurrentController()
+    return jsonify(totalNumberOfDoneReviews = controller.getNumberOfDoneReviews()
+                        ,totalNumberOfOverallReviews = controller.getNumberOfOverallReviews())
 
 @app.route('/next')
 def next():   
-    isSaved = save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other'),convertInput(request.args.get('sentiment')))
-    if isSaved is False:
-        return jsonify(error="error")
-    c = getCurrentController()    
-    c.onNext()    
-    l = c.getReivew()    
-    r = l.review
-    return jsonify(comment=htmlParser.unescape(r.comment) , title= htmlParser.unescape(r.title), stars= r.stars,
-                    bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request, other = decodeInput(l.other), sentiment = l.sentiment) 
+    c = getCurrentController()
+    return manageData(c,request,'next')
 
 @app.route('/prev')
-def prev():
-    isSaved = save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other'),convertInput(request.args.get('sentiment')))
-    if isSaved is False:
-        return jsonify(error="error")
+def prev():    
     c = getCurrentController()
-    c.onPrev()    
-    l = c.getReivew()    
-    r = l.review
-    return jsonify(comment=htmlParser.unescape(r.comment) , title= htmlParser.unescape(r.title), stars= r.stars,
-                    bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request, other = decodeInput(l.other), sentiment = l.sentiment)
+    return manageData(c,request,'prev')
+    
+  
+   
 @app.route('/changeProject')
 def changeProject():
-    save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other'),convertInput(request.args.get('sentiment')))    
-    c = getCurrentController()
-    currProject = request.args.get('currProject')
-    c.setCurrentProject(currProject)
-    l = c.getReivew()    
-    r = l.review
-    return jsonify(comment=htmlParser.unescape(r.comment) , title= htmlParser.unescape(r.title), stars= r.stars,currentProject= currProject,
-                    bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request, other =decodeInput(l.other), sentiment = l.sentiment, numberOfReviewsPerProject = c.getNumberOfReviewsPerProject(), reviewId =c.getReviewId())
+    c = getCurrentController()    
+    return manageData(c,request,"changeProject")    
 
+def manageData(controller, request,action):
+    isSaved = save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other')
+                   ,convertInput(request.args.get('sentiment')))
+    if isSaved is False:
+        return jsonify(error="error")
+    else: 
+      
+        if action =="changeProject":
+            currProject = request.args.get('currProject')
+            controller.setCurrentProject(currProject)
+            l = controller.getReivew()    
+            r = l.review
+            return jsonify(comment=htmlParser.unescape(r.comment) , title= htmlParser.unescape(r.title)
+                           , stars= r.stars,currentProject= currProject, bug=l.bug_report, 
+                           ff = l.feature_feedback, fr = l.feature_request, other =decodeInput(l.other),
+                            sentiment = l.sentiment, numberOfReviewsPerProject = controller.getNumberOfReviewsPerProject(), reviewId =controller.getReviewId(),totalNumberOfDoneReviews = controller.getNumberOfDoneReviews()
+                            ,totalNumberOfOverallReviews = controller.getNumberOfOverallReviews())
+        if action == "next":
+            controller.onNext()
+        else:
+            if action == "prev":
+                controller.onPrev()
+        l = controller.getReivew()    
+        r = l.review   
+        return jsonify(comment=htmlParser.unescape(r.comment) , title= htmlParser.unescape(r.title), stars= r.stars,
+                       bug=l.bug_report, ff = l.feature_feedback,
+                        fr = l.feature_request, other = decodeInput(l.other), sentiment = l.sentiment
+                        ,numberOfReviewsPerProject = controller.getNumberOfReviewsPerProject()
+                        ,reviewId =controller.getReviewId(),totalNumberOfDoneReviews = controller.getNumberOfDoneReviews()
+                        ,totalNumberOfOverallReviews = controller.getNumberOfOverallReviews())
 def convertBool(val):
     if(val == 'true'):
         return True
     return False
 
 def convertInput(val):
-    if val == 'None' or val == 'none' or val == None or val == "":
+    if val == 'None' or val == 'none' or val == None or val == "" or val == '-1': 
         return -1
     if not val:
         return -1
@@ -119,7 +134,7 @@ def validateUser(username,password):
 # Create New Session     
             newController= Controller()                 
             newController.setUserId(u.user_id)
-            newController.init()
+            newController.CreateController()
             sessionManager.createNewSession(u,newController)            
             return True
         else:
@@ -140,6 +155,7 @@ def save(bug,ff,fr,other,sentiment):
     if not validateInput(bug,ff,fr,other,sentiment):
         return False    
     currentController = getCurrentController()
+    currentController.setNumberOfDoneReviews()
     currentController.setBugReport(bug)
     currentController.setFeatureFeedback(ff)
     currentController.setFeatureRequest(fr)

@@ -24,7 +24,6 @@
 	float: right;
 }
 
-
 .form-logout {
 	border-bottom-left-radius: 0;
 	border-top-left-radius: 0;
@@ -90,13 +89,24 @@
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
 }
+
+.overall {
+	float: right;
+	width: 13%;
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgba(128, 128, 128, 0.36);
+}
+
 .progress .bar {
-    -webkit-transition: none;
-    -moz-transition: none;
-    -ms-transition: none;
-    -o-transition: none;
-    transition: none;
-}​
+	-webkit-transition: none;
+	-moz-transition: none;
+	-ms-transition: none;
+	-o-transition: none;
+	transition: none;
+}
+
+​
 .account-wall {
 	margin-top: 20px;
 	padding: 40px 0px 20px 0px;
