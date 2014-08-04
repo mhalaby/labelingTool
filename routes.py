@@ -44,14 +44,14 @@ def view():
         r = l.review
         projects = c.getProjects()    
         return render_template('main.html', username= currentSession.getSessionUser().username, comment=htmlParser.unescape(r.comment) , title= htmlParser.unescape(r.title), stars= r.stars, projects = projects, currentProject = c.getCurrentProject(),
-                           bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request, other =decodeInput(l.other), sentiment = l.sentiment, numberOfReviewsPerProject = c.getNumberOfReviewsPerProject(), reviewId =c.getReviewId(),totalNumberOfDoneReviews = c.getNumberOfDoneReviews(),totalNumberOfOverallReviews = c.getNumberOfOverallReviews())
+                           bug=l.bug_report, ff = l.feature_feedback, fr = l.feature_request,fs=l.feature_shortcoming,us=l.usage_scenario,pr=l.praise,co=l.complaint, other =decodeInput(l.other), sentiment = l.sentiment, numberOfReviewsPerProject = c.getNumberOfReviewsPerProject(), reviewId =c.getReviewId(),totalNumberOfDoneReviews = c.getNumberOfDoneReviews(),totalNumberOfOverallReviews = c.getNumberOfOverallReviews())
     else:
         return redirect(url_for('index'))
     
      
 @app.route('/save') 
 def saving():
-    isSaved = save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other'),convertInput(request.args.get('sentiment')))
+    isSaved = save(request.args.get('bug'),request.args.get('ff'),request.args.get('fs'),request.args.get('us'),request.args.get('pr'),request.args.get('co'),request.args.get('fr'),request.args.get('other'),convertInput(request.args.get('sentiment')))
     if isSaved is False:
         return jsonify(error="error")
     controller = getCurrentController()
@@ -76,7 +76,7 @@ def changeProject():
     return manageData(c,request,"changeProject")    
 
 def manageData(controller, request,action):
-    isSaved = save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('other')
+    isSaved = save(request.args.get('bug'),request.args.get('ff'),request.args.get('fr'),request.args.get('fs'),request.args.get('us'),request.args.get('pr'),request.args.get('co'),request.args.get('other')
                    ,convertInput(request.args.get('sentiment')))
     if isSaved is False:
         return jsonify(error="error")
@@ -89,7 +89,7 @@ def manageData(controller, request,action):
             r = l.review
             return jsonify(comment=htmlParser.unescape(r.comment) , title= htmlParser.unescape(r.title)
                            , stars= r.stars,currentProject= currProject, bug=l.bug_report, 
-                           ff = l.feature_feedback, fr = l.feature_request, other =decodeInput(l.other),
+                           ff = l.feature_feedback, fr = l.feature_request,fs=l.feature_shortcoming,us=l.usage_scenario,pr=l.praise,co=l.complaint, other =decodeInput(l.other),
                             sentiment = l.sentiment, numberOfReviewsPerProject = controller.getNumberOfReviewsPerProject(), reviewId =controller.getReviewId(),totalNumberOfDoneReviews = controller.getNumberOfDoneReviews()
                             ,totalNumberOfOverallReviews = controller.getNumberOfOverallReviews())
         if action == "next":
@@ -101,7 +101,7 @@ def manageData(controller, request,action):
         r = l.review   
         return jsonify(comment=htmlParser.unescape(r.comment) , title= htmlParser.unescape(r.title), stars= r.stars,
                        bug=l.bug_report, ff = l.feature_feedback,
-                        fr = l.feature_request, other = decodeInput(l.other), sentiment = l.sentiment
+                        fr = l.feature_request,fs=l.feature_shortcoming,us=l.usage_scenario,pr=l.praise,co=l.complaint, other = decodeInput(l.other), sentiment = l.sentiment
                         ,numberOfReviewsPerProject = controller.getNumberOfReviewsPerProject()
                         ,reviewId =controller.getReviewId(),totalNumberOfDoneReviews = controller.getNumberOfDoneReviews()
                         ,totalNumberOfOverallReviews = controller.getNumberOfOverallReviews())
@@ -144,30 +144,38 @@ def getCurrentController():
     currentSession = sessionManager.getSessionByUser(request.cookies.get('username'))
     return currentSession.getSessionController()
 
-def save(bug,ff,fr,other,sentiment): 
+def save(bug,ff,fr,fs,us,pr,co,other,sentiment): 
     for s in sessionManager.sessions:
         print s.user.username, " ",s.c.review_id
     bug = convertBool(bug)
     ff = convertBool(ff)
     fr = convertBool(fr)
+    fs = convertBool(fs)
+    us = convertBool(us)
+    pr = convertBool(pr)
+    co = convertBool(co)
     other = convertInput(other)
     sentiment = convertInput(sentiment)
-    if not validateInput(bug,ff,fr,other,sentiment):
+    if not validateInput(bug,ff,fr,fs,pr,us,co,other,sentiment):
         return False    
     currentController = getCurrentController()
     currentController.setNumberOfDoneReviews()
     currentController.setBugReport(bug)
     currentController.setFeatureFeedback(ff)
     currentController.setFeatureRequest(fr)
+    currentController.setFeatureShortcoming(fs)
+    currentController.setPraise(pr)
+    currentController.setComplaint(co)
+    currentController.setUsageScenario(us)
     currentController.setOther(decodeInput(other))
     currentController.setDone()
     currentController.setSentiment(sentiment)
     currentController.saveLabeledReview()
     return True
 
-def validateInput(bug,ff,fr,other,sentiment):
+def validateInput(bug,ff,fr,fs,pr,us,co,other,sentiment):
     print "validating input.. bug ",bug, " ff ", ff, " fr ", fr," other ", other , " sentiment ", sentiment
-    if (((bug is False) and (ff is False) and (fr is False) and  (other == -1)) 
+    if (((bug is False) and (ff is False) and (fr is False) and (fs is False) and (us is False) and (co is False) and (pr is False) and  (other == -1)) 
         or ((sentiment == -1))) :
         print "validation is false"
         return False

@@ -98,6 +98,18 @@ class Controller():
     def setFeatureRequest(self, val):
         self.rs[self.review_id].feature_request = val
 
+    def setFeatureShortcoming(self, val):
+        self.rs[self.review_id].feature_shortcoming = val
+
+    def setPraise(self, val):
+        self.rs[self.review_id].praise = val
+        
+    def setComplaint(self, val):
+        self.rs[self.review_id].complaint = val
+
+    def setUsageScenario(self, val):
+        self.rs[self.review_id].usage_scenario = val
+
     def setFeatureFeedback(self, val):
         self.rs[self.review_id].feature_feedback = val
 
@@ -148,6 +160,10 @@ class Controller():
                     l.bug_report = 0
                     l.feature_feedback = 0
                     l.feature_request = 0
+                    l.feature_shortcoming = 0
+                    l.praise= 0
+                    l.complaint= 0
+                    l.usage_scenario = 0                
                     l.sentiment = -1
                     l.other = ""
                     l.project_id = i
@@ -169,6 +185,10 @@ class Controller():
                 l.bug_report = 0
                 l.feature_feedback = 0
                 l.feature_request = 0
+                l.feature_shortcoming = 0
+                l.praise= 0
+                l.complaint= 0
+                l.usage_scenario = 0                
                 l.sentiment = -1
                 l.other = ""
                 l.project_id = 2
@@ -192,6 +212,10 @@ class Controller():
                     l.bug_report = 0
                     l.feature_feedback = 0
                     l.feature_request = 0
+                    l.feature_shortcoming = 0
+                    l.praise= 0
+                    l.complaint= 0
+                    l.usage_scenario = 0                
                     l.sentiment = -1
                     l.other = ""
                     l.project_id = 2

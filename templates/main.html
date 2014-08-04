@@ -22,6 +22,10 @@
 				bug : $("#bug").prop('checked'),
 				fr : $("#featureReq").prop('checked'),
 				ff : $("#featureFeed").prop('checked'),
+				fs : $("#featureShort").prop('checked'),
+				pr : $("#praise").prop('checked'),
+				co : $("#complaint").prop('checked'),
+				us : $("#usageScenario").prop('checked'),
 				other : $("#other").val(),
 				sentiment : selectedSentiment,
 			}, function(data) {
@@ -40,6 +44,10 @@
 				bug : $("#bug").prop('checked'),
 				fr : $("#featureReq").prop('checked'),
 				ff : $("#featureFeed").prop('checked'),
+				fs : $("#featureShort").prop('checked'),
+				pr : $("#praise").prop('checked'),
+				co : $("#complaint").prop('checked'),
+				us : $("#usageScenario").prop('checked'),
 				other : $("#other").val(),
 				sentiment : selectedSentiment,
 			}, function(data) {
@@ -58,6 +66,10 @@
 				bug : $("#bug").prop('checked'),
 				fr : $("#featureReq").prop('checked'),
 				ff : $("#featureFeed").prop('checked'),
+				fs : $("#featureShort").prop('checked'),
+				pr : $("#praise").prop('checked'),
+				co : $("#complaint").prop('checked'),
+				us : $("#usageScenario").prop('checked'),
 				other : $("#other").val(),
 				sentiment : selectedSentiment,
 			}, function(data) {
@@ -90,6 +102,10 @@
 			$("#bug").prop('checked', data.bug);
 			$("#featureFeed").prop('checked', data.ff);
 			$("#featureReq").prop('checked', data.fr);
+			$("#featureShort").prop('checked',data.fs);
+			$("#praise").prop('checked',data.pr);
+			$("#complaint").prop('checked',data.co);
+			$("#usageScenario").prop('checked',data.us);
 			console.log(data.sentiment)
 			if (data.sentiment) {
 				$('a#sentiment').parent().removeClass('active');
@@ -121,6 +137,10 @@
 				bug : $("#bug").prop('checked'),
 				fr : $("#featureReq").prop('checked'),
 				ff : $("#featureFeed").prop('checked'),
+				fs : $("#featureShort").prop('checked'),
+				pr : $("#praise").prop('checked'),
+				co : $("#complaint").prop('checked'),
+				us : $("#usageScenario").prop('checked'),
 				other : $("#other").val(),
 				sentiment : selectedSentiment
 			}, function(data) {
@@ -143,6 +163,11 @@
 			$("#bug").prop('checked', convertToBool('{{bug}}'));
 			$("#featureFeed").prop('checked', convertToBool('{{ff}}'));
 			$("#featureReq").prop('checked', convertToBool('{{fr}}'));
+			$("#featureShort").prop('checked', convertToBool('{{fs}}'));
+			$("#praise").prop('checked', convertToBool('{{pr}}'));
+			$("#complaint").prop('checked', convertToBool('{{co}}'));
+			$("#usageScenario").prop('checked', convertToBool('{{us}}'));
+			
 			selectedSentiment = '{{sentiment}}';
 			$("a[name = '{{sentiment}}']").parent().toggleClass('active');
 			if ('{{other}}') {
@@ -269,12 +294,17 @@
 								<h5 class="input-field-header">Choose the appropriate
 									tag(s):</h5>
 								<div class="input-group">
-									<input id="bug" type="checkbox"> <span
-										class="input-field">Bug Report</span></input> </br> <input id="featureReq"
-										type="checkbox"> <span class="input-field">Feature
-										Request</span></input> </br> <input id="featureFeed" type="checkbox"> <span
-										class="input-field">Feature Feedback</span></input> </br> <input
-										id="otherCheck" type="checkbox"> <span
+									<input id="featureShort" type="checkbox"> <span
+										class="input-field" title="describes app feature (aspect) the user is not satisfied with">Feature Shortcoming</span></input> </br> 
+										<input id="featureFeed" type="checkbox"> <span 
+										class="input-field" title="describes app feature (aspect) the suer is satisfied with">Feature Strength</span></input> </br>
+										 <input id="featureReq" type="checkbox"> <span class="input-field" title="asks for a missing feature">Feature Request</span></br>
+									<input id="bug" type="checkbox"> <span title="reports software failure"
+										class="input-field">Bug Report</span></input> </br>
+										 <input id="usageScenario" type="checkbox"> <span class="input-field" title="describe a scenario the app has proven useful for">Usage Scenario</span></br>
+										 <input id="praise" type="checkbox"> <span class="input-field" title="expresses general appreciation with the app">General Praise</span></br>
+										 <input id="complaint" type="checkbox"> <span class="input-field" title="expresses general disatisfaction with the app">General Complaint</span></br>
+										<input id="otherCheck" type="checkbox"> <span title="important to have in case we missed something, will help us gain insight" 
 										class="input-field">Other</span></input> </br> <input id="other"
 										type="text" class="form-control">
 								</div>

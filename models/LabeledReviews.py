@@ -12,7 +12,11 @@ class labeledReview(baseModel.BaseModel):
     sentiment = IntegerField()
     bug_report = BooleanField()
     feature_request = BooleanField()
-    feature_feedback = BooleanField()
+    feature_feedback = BooleanField() #feature strength    
+    feature_shortcoming = BooleanField()
+    usage_scenario = BooleanField()
+    praise = BooleanField()
+    complaint = BooleanField()
     other = CharField()
     done = BooleanField()
     
