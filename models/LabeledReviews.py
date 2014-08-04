@@ -31,6 +31,7 @@ class labeledReview(baseModel.BaseModel):
         return False
     
     def getLabeledReviewsByUserId(self, userId, projectId):
+        print userId, projectId
         result = []        
         for l in labeledReview.select().join(reviews).where((labeledReview.user_id == userId) & (labeledReview.project_id == projectId)):
             result.append(l)
@@ -52,6 +53,8 @@ class labeledReview(baseModel.BaseModel):
         
     def getDoneReviews(self,userId):
         for f in labeledReview.select(fn.Count(labeledReview.id).alias('count')).where((labeledReview.user_id == userId) & (labeledReview.done == 1)):
+            if f.count == '' or f.count == None:
+                return 0 
             return int(f.count)
 
     def getNumberOfLabeledReviewsByUserId(self, userId):        

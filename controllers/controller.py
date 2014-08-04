@@ -1,7 +1,8 @@
 from models.Review import reviews
+from models.TestReviews import testreviews
 from models.Project import projects
 from models.BaseModel import BaseModel
-
+import nltk.data
 from models.LabeledReviews import labeledReview
 from controllers.Strat import Strat
 
@@ -12,23 +13,24 @@ class Controller():
         self.projects = projects()
         self.review_id = 0
         self.userId = 0
-        self.projectId = 0
+        self.projectId = 1
         self.numberOfDoneReviews = 0
         self.numberOfOverallReviews = 0
+        
     def CreateController(self):
-        try:
-            if not self.reviews.doesUserExist(self.getUserId()):
-                self.runStrat()
+        try:               
             self.projectsList = self.getProjects()
             self.currentProject = self.projects.getProjects()[self.projectId].name
+            print "current project ",self.currentProject
             self.rs = self.reviews.getLabeledReviewsByUserId(self.getUserId(), self.projects.getProjectIdByName(self.currentProject))
+            #self.runTestSample()
             self.setLastReviewIndex( self.projects.getProjects()[self.projectId].project_id)
             self.numberOfDoneReviews =  self.reviews.getDoneReviews(self.getUserId())
             self.numberOfOverallReviews = self.reviews.getNumberOfLabeledReviewsByUserId(self.getUserId())
         except Exception as e:
             BaseModel()._connect()
             print "init ERROR reconnecting, ", e
-            self.init()
+            self.CreateController()
 
     def setUserId(self, userId):
         self.userId = userId
@@ -45,6 +47,7 @@ class Controller():
             self.review_id -= 1
 
     def getReivew(self):
+        print "te", self.rs
         return self.rs[self.review_id]
 
     def getProjects(self):
@@ -116,7 +119,7 @@ class Controller():
             if self.review_id < len(self.rs) - 1:
                 self.review_id += 1
 
-    def getLastReviewIndex(self,lastElement):
+    def getLastReviewIndex(self,lastElement):        
         return [int(x.review.review_id) for x in self.rs].index(int(lastElement.review.review_id))
 
     def getReviewId(self):
@@ -130,6 +133,7 @@ class Controller():
         print "numberOfDoneReviews ", self.numberOfDoneReviews
     def getNumberOfOverallReviews(self):
         return self.numberOfOverallReviews
+    
     def runStrat(self):
         s = Strat()
         allProjects = self.getProjects()
@@ -148,7 +152,51 @@ class Controller():
                     l.other = ""
                     l.project_id = i
                     l.review_id = review.review_id
-                    l.user_id = self.getUserId()
+                    l.user_id = 10
                     l.save()
 
+    def runTestSample(self):
+        tokenizer = nltk.data.load('nltk:tokenizers/punkt/english.pickle')
+        s = Strat()
+        projectId = 2
+        i=0
+        counter  = 1000000        
+        result = s.runStrat(projectId)
+        for rating in range(0, 5):
+            reviews_per_rating = result[rating]
+            for review in reviews_per_rating:
+                l = labeledReview()                
+                l.bug_report = 0
+                l.feature_feedback = 0
+                l.feature_request = 0
+                l.sentiment = -1
+                l.other = ""
+                l.project_id = 2
+                l.user_id = 11
+                l.review_id = review.review_id
+                print l.review_id, i 
+                i +=1
+                l.save()
+                allText =  review.title + ". "+review.comment  
+                list = tokenizer.tokenize(allText.strip())             
+                for text in list:
+                    l = labeledReview()
+                    r= reviews()
+                    r.comment= text
+                    r.title=""
+                    r.stars = rating + 1
+                    r.project_id = 2
+                    r.review_id = counter
+                    l.review_id = r.review_id
+                    r.save(force_insert=True)
+                    l.bug_report = 0
+                    l.feature_feedback = 0
+                    l.feature_request = 0
+                    l.sentiment = -1
+                    l.other = ""
+                    l.project_id = 2
+                    counter +=1
+                    l.user_id = 10
+                    l.save()
+                    print review.review_id, text
 

@@ -134,7 +134,7 @@ def validateUser(username,password):
 # Create New Session     
             newController= Controller()                 
             newController.setUserId(u.user_id)
-            newController.CreateController()
+            newController.CreateController()                           
             sessionManager.createNewSession(u,newController)            
             return True
         else:
@@ -177,3 +177,5 @@ def validateInput(bug,ff,fr,other,sentiment):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+   
