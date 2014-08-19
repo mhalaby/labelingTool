@@ -1,5 +1,4 @@
 from models.Review import reviews
-from models.TestReviews import testreviews
 from models.Project import projects
 from models.BaseModel import BaseModel
 import nltk.data
@@ -11,12 +10,13 @@ class Controller():
     def __init__(self):
         self.reviews = labeledReview()
         self.projects = projects()
-        self.review_id = 0
+        self.review_idx = 0
         self.userId = 0
+        ####### when launching this value will be 0
         self.projectId = 1
         self.numberOfDoneReviews = 0
         self.numberOfOverallReviews = 0
-        
+        self.numberOfDoneReviewsPerProject = 0
     def CreateController(self):
         try:               
             self.projectsList = self.getProjects()
@@ -27,6 +27,7 @@ class Controller():
             self.setLastReviewIndex( self.projects.getProjects()[self.projectId].project_id)
             self.numberOfDoneReviews =  self.reviews.getDoneReviews(self.getUserId())
             self.numberOfOverallReviews = self.reviews.getNumberOfLabeledReviewsByUserId(self.getUserId())
+            self.numberOfDoneReviewsPerProject = self.reviews.getDoneReviewByProject(self.getUserId(),self.projects.getProjects()[self.projectId].project_id)
         except Exception as e:
             BaseModel()._connect()
             print "init ERROR reconnecting, ", e
@@ -39,16 +40,27 @@ class Controller():
         return self.userId
 
     def onNext(self):
-        if self.review_id < len(self.rs) - 1:
-            self.review_id += 1
+        print "On next current review index = ", self.review_idx
+        if self.review_idx < len(self.rs) - 1:
+            self.review_idx += 1
+            print "On next review index = ", self.review_idx
+
+    def goTo(self,review_idx):
+        print "On goto current review index = ", self.review_idx
+        self.review_idx = int(review_idx)
+        print "On goto review index = ", self.review_idx
 
     def onPrev(self):
-        if(self.review_id != 0):
-            self.review_id -= 1
+        print "On prev current review index = ", self.review_idx
+        if(self.review_idx != 0):
+            self.review_idx -= 1
+            print "On prev review index = ", self.review_idx
 
-    def getReivew(self):
-        print "te", self.rs
-        return self.rs[self.review_id]
+    def getReivew(self):        
+        print "get current review =",self.rs[self.review_idx].review_id
+        print "get current labeled review id = ",self.rs[self.review_idx].id
+        print "current labeled review values bug = ", self.rs[self.review_idx].bug_report, " fr = ", self.rs[self.review_idx].feature_request, " ff = ",  self.rs[self.review_idx].feature_feedback, " fs = ",  self.rs[self.review_idx].feature_shortcoming, " pr = ",  self.rs[self.review_idx].praise, " co = ", self.rs[self.review_idx].complaint, " noise = ", self.rs[self.review_idx].noise, " other = ",  self.rs[self.review_idx].other, " sentiment = ", self.rs[self.review_idx].sentiment
+        return self.rs[self.review_idx]
 
     def getProjects(self):
         try:
@@ -67,13 +79,17 @@ class Controller():
     def getNumberOfReviewsPerProject(self):
         return len(self.rs) - 1
 
+    def getNumberOfDoneReviewsPerProject(self):
+        return self.numberOfDoneReviewsPerProject
+
     def setCurrentProject(self, currentProjectName):
         try:
             self.currentProject = currentProjectName
             projectId= self.projects.getProjectIdByName(currentProjectName)
+            self.numberOfDoneReviewsPerProject = self.reviews.getDoneReviewByProject(self.getUserId(),projectId)
             self.rs = self.reviews.getLabeledReviewsByUserId(self.userId, projectId)
             self.setLastReviewIndex(projectId)
-            print "review index", self.review_id,"Project id", projectId
+            print "review index", self.review_idx,"Project id", projectId
 
         except:
             BaseModel()._connect()
@@ -82,67 +98,77 @@ class Controller():
 
     def saveLabeledReview(self):
         try:
-            print 'savelabel', self.rs[self.review_id].user_id , "user id", self.userId, self.rs[self.review_id].review_id
-            self.rs[self.review_id].save()
+            print 'saving into db for user ', self.rs[self.review_idx].user_id ," and review id", self.rs[self.review_idx].review_id," current review index ",self.review_idx
+            self.rs[self.review_idx].save()
+            self.numberOfDoneReviewsPerProject = self.reviews.getDoneReviewByProject(self.getUserId(),self.getCurrentProjectId())
         except:
             BaseModel()._connect()
             print "ERROR while saving reconnecting..."
             self.saveLabeledReview()
 
     def setBugReport(self, val):
-        self.rs[self.review_id].bug_report = val
+        self.rs[self.review_idx].bug_report = val
 
     def setSentiment(self, val):
-        self.rs[self.review_id].sentiment = val
+        self.rs[self.review_idx].sentiment = val
 
     def setFeatureRequest(self, val):
-        self.rs[self.review_id].feature_request = val
+        self.rs[self.review_idx].feature_request = val
 
     def setFeatureShortcoming(self, val):
-        self.rs[self.review_id].feature_shortcoming = val
+        self.rs[self.review_idx].feature_shortcoming = val
 
     def setPraise(self, val):
-        self.rs[self.review_id].praise = val
+        self.rs[self.review_idx].praise = val
         
     def setComplaint(self, val):
-        self.rs[self.review_id].complaint = val
+        self.rs[self.review_idx].complaint = val
+        
+    def setNoise(self, val):
+        self.rs[self.review_idx].noise = val
 
     def setUsageScenario(self, val):
-        self.rs[self.review_id].usage_scenario = val
+        self.rs[self.review_idx].usage_scenario = val
 
     def setFeatureFeedback(self, val):
-        self.rs[self.review_id].feature_feedback = val
+        self.rs[self.review_idx].feature_feedback = val
 
     def setOther(self, val):
-        self.rs[self.review_id].other = val
+        self.rs[self.review_idx].other = val
 
     def setReview(self, review):
         self.rs = review
 
     def setDone(self):
-        self.rs[self.review_id].done = True
+        self.rs[self.review_idx].done = True
 
     def setLastReviewIndex(self,projectId):
         self.lastReviewForCurrentProject = self.reviews.getLastReviewByProjectId(self.getUserId(), projectId)
         if self.lastReviewForCurrentProject is None:
-            self.review_id = 0
+            self.review_idx = 0
         else:
-            self.review_id = self.getLastReviewIndex(self.lastReviewForCurrentProject)
-            if self.review_id < len(self.rs) - 1:
-                self.review_id += 1
+            self.review_idx = self.getLastReviewIndex(self.lastReviewForCurrentProject)
+            if self.review_idx < len(self.rs) - 1:
+                self.review_idx += 1
 
     def getLastReviewIndex(self,lastElement):        
         return [int(x.review.review_id) for x in self.rs].index(int(lastElement.review.review_id))
 
     def getReviewId(self):
-        return self.review_id
+        return self.review_idx
     
     def getNumberOfDoneReviews(self):
         return self.numberOfDoneReviews
     
     def setNumberOfDoneReviews(self):
-        self.numberOfDoneReviews = self.reviews.getDoneReviews(self.getUserId())
-        print "numberOfDoneReviews ", self.numberOfDoneReviews
+        try:
+            self.numberOfDoneReviews = self.reviews.getDoneReviews(self.getUserId())
+            print "numberOfDoneReviews ", self.numberOfDoneReviews
+        except Exception as e:
+            BaseModel()._connect()
+            print "setNumberOfDoneReviews ERROR reconnecting, ", e
+            self.setNumberOfDoneReviews()
+
     def getNumberOfOverallReviews(self):
         return self.numberOfOverallReviews
     

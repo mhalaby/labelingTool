@@ -1,8 +1,10 @@
 import peewee
 from peewee import *
+from playhouse.pool import *
 from flask import Flask,request
 
-db = MySQLDatabase('feedbacks', host="localhost", user='root', passwd='admin', threadlocals=True)
+db = PooledMySQLDatabase('feedbacks',    stale_timeout=None,
+ host="localhost", user='root', passwd='admin', threadlocals=True)
 
 class BaseModel(peewee.Model):
         

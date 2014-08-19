@@ -3,20 +3,20 @@
 <head>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <link
-	href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
-	rel="stylesheet">
+        href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
+        rel="stylesheet">
 <script
-	src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+        src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 <script
-	src="//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.2.0/bootbox.min.js"></script>
+        src="//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.2.0/bootbox.min.js"></script>
 
 <link rel="stylesheet" type="text/css"
-	href="{{ url_for('static', filename='main.css') }}">
+      href="{{ url_for('static', filename='main.css') }}">
 <script type=text/javascript>
 	$(function() {
 		var selectedSentiment;
 		var errorMsg = "<h4><span class='glyphicon glyphicon-exclamation-sign' style='color:red'> </span> Make sure you've selected a tag and a sentiment!</h4>";
-		var timer;
+		
 		$('#save').bind('click', function() {
 			$.getJSON('/save', {
 				bug : $("#bug").prop('checked'),
@@ -26,59 +26,94 @@
 				pr : $("#praise").prop('checked'),
 				co : $("#complaint").prop('checked'),
 				us : $("#usageScenario").prop('checked'),
+				noise: $("#noise").prop('checked'),
 				other : $("#other").val(),
 				sentiment : selectedSentiment,
 			}, function(data) {
 				setProgressBar("#baroverall",".overall", data.totalNumberOfOverallReviews,data.totalNumberOfDoneReviews,10);
-				if(data.error == "error") 				
-					bootbox.alert(errorMsg);				
+				//if noise selected skip sentiment
+			
+				if(data.error == "error" && !$("#noise").prop('checked')) 				
+					bootbox.alert(errorMsg);
 				else
 					bootbox.alert("<h3> <span class='glyphicon glyphicon-floppy-save'></span> Data saved...</h3>");
+										
 			});
 			return false;
 		});
+
+        $('button#goTo').bind('click', function() {
+             $.getJSON('/goTo', {
+                review_idx : $("#review_idx").val()
+             }, function(data) {
+                    if(data.error == "error") {
+                        bootbox.alert("<h4><span class='glyphicon glyphicon-exclamation-sign' style='color:red'> </span> You can only go to tagged reviews</h4>");
+                    }else
+                    if(data.error == "alphaerror") {
+                        bootbox.alert("<h4><span class='glyphicon glyphicon-exclamation-sign' style='color:red'> </span> Only numbers greater than zero are allowed</h4>");
+                    }else{
+                        if(update(data)){
+                            setProgressBar("#bar","#projectProgress",data.numberOfReviewsPerProject,data.reviewId,80);
+                        }
+					}
+				});
+			 $("#review_idx").val("");
+        });
+
+		var nexttimer;
+
 		$('button#next').bind('click', function() {
-			if($("#bar").width() >= $("#projectProgress").width())
-				return false;
-			$.getJSON('/next', {
-				bug : $("#bug").prop('checked'),
-				fr : $("#featureReq").prop('checked'),
-				ff : $("#featureFeed").prop('checked'),
-				fs : $("#featureShort").prop('checked'),
-				pr : $("#praise").prop('checked'),
-				co : $("#complaint").prop('checked'),
-				us : $("#usageScenario").prop('checked'),
-				other : $("#other").val(),
-				sentiment : selectedSentiment,
-			}, function(data) {
-				
-				if(update(data)){
-					addStep(data.numberOfReviewsPerProject)
-					setProgressBar("#baroverall",".overall", data.totalNumberOfOverallReviews,data.totalNumberOfDoneReviews,10);				}
-			});
+			if(nexttimer) clearTimeout(nexttimer);
+			$('button#next').prop('disabled',true);
+			nexttimer = setTimeout(function(){
+				$('button#next').prop('disabled',false);
+		
+				if($("#bar").width() >= $("#projectProgress").width())
+					return false;
+				$.getJSON('/next', {
+					bug : $("#bug").prop('checked'),
+					fr : $("#featureReq").prop('checked'),
+					ff : $("#featureFeed").prop('checked'),
+					fs : $("#featureShort").prop('checked'),
+					pr : $("#praise").prop('checked'),
+					co : $("#complaint").prop('checked'),
+					us : $("#usageScenario").prop('checked'),
+					other : $("#other").val(),
+					noise: $("#noise").prop('checked'),
+					sentiment : selectedSentiment,
+				}, function(data) {
+					if(update(data)){
+						addStep(data.numberOfReviewsPerProject)
+						setProgressBar("#baroverall",".overall", data.totalNumberOfOverallReviews,data.totalNumberOfDoneReviews,10);				}
+				});}
+			,1000);
 			return false;
 		});
-
+		var prevtimer;
 		$('button#prev').bind('click', function() {
-			if($("#bar").width() <= 0)
-				return false;
-			$.getJSON('/prev', {
-				bug : $("#bug").prop('checked'),
-				fr : $("#featureReq").prop('checked'),
-				ff : $("#featureFeed").prop('checked'),
-				fs : $("#featureShort").prop('checked'),
-				pr : $("#praise").prop('checked'),
-				co : $("#complaint").prop('checked'),
-				us : $("#usageScenario").prop('checked'),
-				other : $("#other").val(),
-				sentiment : selectedSentiment,
-			}, function(data) {
-				if(update(data)){
-					subStep(data.numberOfReviewsPerProject);
-					setProgressBar("#baroverall",".overall", data.totalNumberOfOverallReviews,data.totalNumberOfDoneReviews,10);				
-				}
-
-			});
+			$('button#prev').prop('disabled',true);
+			if(prevtimer) clearTimeout(prevtimer);
+			prevtimer = setTimeout(function(){
+				$('button#prev').prop('disabled',false);
+				if($("#bar").width() <= 0)
+					return false;
+				$.getJSON('/prev', {
+					bug : $("#bug").prop('checked'),
+					fr : $("#featureReq").prop('checked'),
+					ff : $("#featureFeed").prop('checked'),
+					fs : $("#featureShort").prop('checked'),
+					pr : $("#praise").prop('checked'),
+					co : $("#complaint").prop('checked'),
+					us : $("#usageScenario").prop('checked'),
+					other : $("#other").val(),
+					noise: $("#noise").prop('checked'),
+					sentiment : selectedSentiment,
+				}, function(data) {
+					if(update(data)){
+						subStep(data.numberOfReviewsPerProject);
+						setProgressBar("#baroverall",".overall", data.totalNumberOfOverallReviews,data.totalNumberOfDoneReviews,10);				
+					}
+				})},1000);
 			return false;
 		});
 		$('a#sentiment').bind(
@@ -91,8 +126,8 @@
 					selectedSentiment = e.target.name;
 				});
 
-		function update(data) {
-			if(data.error == "error") {
+		function update(data) {		
+			if(data.error == "error" && !$("#noise").prop('checked')) {
 				bootbox.alert(errorMsg);
 				return false;
 			}
@@ -106,6 +141,7 @@
 			$("#praise").prop('checked',data.pr);
 			$("#complaint").prop('checked',data.co);
 			$("#usageScenario").prop('checked',data.us);
+			$("#noise").prop('checked',data.noise);
 			console.log(data.sentiment)
 			if (data.sentiment) {
 				$('a#sentiment').parent().removeClass('active');
@@ -141,6 +177,7 @@
 				pr : $("#praise").prop('checked'),
 				co : $("#complaint").prop('checked'),
 				us : $("#usageScenario").prop('checked'),
+				noise: $("#noise").prop('checked'),
 				other : $("#other").val(),
 				sentiment : selectedSentiment
 			}, function(data) {
@@ -167,7 +204,7 @@
 			$("#praise").prop('checked', convertToBool('{{pr}}'));
 			$("#complaint").prop('checked', convertToBool('{{co}}'));
 			$("#usageScenario").prop('checked', convertToBool('{{us}}'));
-			
+			$("#noise").prop('checked', convertToBool('{{noise}}'));
 			selectedSentiment = '{{sentiment}}';
 			$("a[name = '{{sentiment}}']").parent().toggleClass('active');
 			if ('{{other}}') {
@@ -212,131 +249,158 @@
 		$("#barText").text({{reviewId}} +1 + " out of "+ numberOfReviews)
 
 	});
+
+
+
+
 </script>
 </head>
 <body>
-	<div class="container">
-		<div class="page-header">
-			<h3>
-				A tool for labeling feedback <span class="label label-danger">Beta</span>
-				<div class="btn-group menu-bar">
-					<form class="form" action="/logout" method="post" name="logout">
+<div class="container">
+    <div class="page-header">
+        <h3>
+            A tool for labeling feedback <span class="label label-danger">Beta</span>
 
-						<button type="submit" href="javascript:void();" id="logout"
-							class="btn btn-default form-logout">
-							Logout <span class="glyphicon glyphicon-log-out"></span>
-						</button>
-					</form>
-					<button type="button" href="javascript:void();" id="save"
-						class="btn btn-default form-save">
-						Save <span class="glyphicon glyphicon-save"></span>
-					</button>
+            <div class="btn-group menu-bar">
+                <form class="form" action="/logout" method="post" name="logout">
 
-				</div>
-				<span id="user">{{username}}</span>
-			</h3>
-		</div>
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title">
+                    <button type="submit" href="javascript:void();" id="logout"
+                            class="btn btn-default form-logout">
+                        Logout <span class="glyphicon glyphicon-log-out"></span>
+                    </button>
+                </form>
+                <button type="button" href="javascript:void();" id="save"
+                        class="btn btn-default form-save">
+                    Save <span class="glyphicon glyphicon-save"></span>
+                </button>
+
+            </div>
+            <span id="user">{{username}}</span>
+        </h3>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">
 					<span class="dropdown"> <a data-toggle="dropdown"
-						class="dropdown-toggle">Project <b class="caret"></b></a>
+                                               class="dropdown-toggle">Project <b class="caret"></b></a>
 						<ul class="dropdown-menu">
-							{% for p in projects %}
-							<li><a href="javascript:void();" name="{{p.name}}" id="link">
-									{{ p.name }}</a></li> {% endfor %}
-						</ul>
+                            {% for p in projects %}
+                            <li><a href="javascript:void();" name="{{p.name}}" id="link">
+                                {{ p.name }}</a></li>
+                            {% endfor %}
+                        </ul>
 					</span> <span id="currentProject">{{currentProject}}</span>
-					<div class="progress overall">
-						<div id="baroverall" class="progress-bar progress-bar-danger" role="progressbar"
-							aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
-							<span class="sr-only">40% Complete (success)</span>
-						</div>
-					</div>
-					<span style="float:right;margin-right:8px;padding-top:2px">Progress: </span>					
-				</h3>
 
-			</div>
-			<div class="panel-body">
-				<div class="row">
-					<div class="col-md-7">
-						<div class="panel panel-default comment">
-							<div class="panel-body">
-								<h4 id="title">{{ title }}</h4>
-								<span id="comment">{{ comment }}</span>
-							</div>
-						</div>
-						<div class="row btn-bar">
-							<div class="col-md-9">
-								<div class="btn-group">
-									<button type="button" href="javascript:void();" id="prev"
-										class="btn btn-default">
-										<span class="glyphicon glyphicon-chevron-left"></span>
-									</button>
-									<button type="button" href="javascript:void();" id="next"
-										class="btn btn-default">
-										<span class="glyphicon glyphicon-chevron-right"></span>
-									</button>
-								</div>
-							</div>
-							<div class="col-md-3">
-								<h5>
-									<span class="glyphicon glyphicon-star"></span> Ratings: <span
-										id="stars">{{stars}} </span>
-								</h5>
-							</div>
-						</div>
-					</div>
+                <div class="progress overall">
+                    <div id="baroverall" class="progress-bar progress-bar-danger" role="progressbar"
+                         aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
+                        <span class="sr-only">40% Complete (success)</span>
+                    </div>
+                </div>
+                <span style="float:right;margin-right:8px;padding-top:2px">Progress: </span>
+            </h3>
 
-					<div class="col-md-5">
-						<div class="panel panel-default">
-							<div class="panel-body">
-								<h5 class="input-field-header">Choose the appropriate
-									tag(s):</h5>
-								<div class="input-group">
-									<input id="featureShort" type="checkbox"> <span
-										class="input-field" title="describes app feature (aspect) the user is not satisfied with">Feature Shortcoming</span></input> </br> 
-										<input id="featureFeed" type="checkbox"> <span 
-										class="input-field" title="describes app feature (aspect) the suer is satisfied with">Feature Strength</span></input> </br>
-										 <input id="featureReq" type="checkbox"> <span class="input-field" title="asks for a missing feature">Feature Request</span></br>
-									<input id="bug" type="checkbox"> <span title="reports software failure"
-										class="input-field">Bug Report</span></input> </br>
-										 <input id="usageScenario" type="checkbox"> <span class="input-field" title="describe a scenario the app has proven useful for">Usage Scenario</span></br>
-										 <input id="praise" type="checkbox"> <span class="input-field" title="expresses general appreciation with the app">General Praise</span></br>
-										 <input id="complaint" type="checkbox"> <span class="input-field" title="expresses general disatisfaction with the app">General Complaint</span></br>
-										<input id="otherCheck" type="checkbox"> <span title="important to have in case we missed something, will help us gain insight" 
-										class="input-field">Other</span></input> </br> <input id="other"
-										type="text" class="form-control">
-								</div>
-								</br>
-								<h5 class="sentiment-field-header">Choose the sentiment:</h5>
-								<ul class="pagination sentiment">
-									<li><a id="sentiment" name="1">very negative</a></li>
-									<li><a id="sentiment" name="2">negative</a></li>
-									<li><a id="sentiment" name="3">Neutral</a></li>
-									<li><a id="sentiment" name="4">positive</a></li>
-									<li><a id="sentiment" name="5">very positive</a></li>
-								</ul>
-							</div>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="panel panel-default comment">
+                        <div class="panel-body">
+                            <h4 id="title">{{ title }}</h4>
+                            <span id="comment">{{ comment }}</span>
+                        </div>
+                    </div>
+                    <div class="row btn-bar">
+                        <div class="col-md-9">
+                            <div class="btn-group">
+                                <button type="button" href="javascript:void();" id="prev"
+                                        class="btn btn-default">
+                                    <span class="glyphicon glyphicon-chevron-left"></span>
+                                </button>
+                                <button type="button" href="javascript:void();" id="next"
+                                        class="btn btn-default">
+                                    <span class="glyphicon glyphicon-chevron-right"></span>
+                                </button>
+                                <div class="input-group">
+                                    <input id="review_idx" type="number" class="form-control" style= "width:24%; float: right;">
+                                     <span class="input-group-btn">
+                                        <button id="goTo" class="btn btn-default" title= "Go to a labelled review only" type="button"><span
+                                                class="glyphicon glyphicon-search"> Go!</span>
+                                        </button>
+                                     </span>
+                                </div>
+                            </div>
 
-						</div>
+                        </div>
+                        <div class="col-md-3">
+                            <h5>
+                                <span class="glyphicon glyphicon-star"></span> Ratings: <span
+                                    id="stars">{{stars}} </span>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
 
-					</div>
+                <div class="col-md-5">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <h5 class="input-field-header">Choose the appropriate
+                                tag(s):</h5>
 
-				</div>
-				<div class="row">
-					<div class="col-md-7">
-						<div class="progress" id="projectProgress">
-							<div id="bar" class="bar progress-bar progress-striped active"
-								role="progressbar" style="width: 0%">
-								<span id="barText"></span>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+                            <div class="input-group">
+                                <input id="featureShort" type="checkbox"> <span
+                                    class="input-field"
+                                    title="describes app feature (aspect) the user is not satisfied with">Feature Shortcoming</span></input> </br>
+                                <input id="featureFeed" type="checkbox"> <span
+                                    class="input-field"
+                                    title="describes app feature (aspect) the user is satisfied with">Feature Strength</span></input> </br>
+                                <input id="featureReq" type="checkbox"> <span class="input-field"
+                                                                              title="asks for a missing feature">Feature Request</span></br>
+                                <input id="bug" type="checkbox"> <span title="reports software failure"
+                                                                       class="input-field">Bug Report</span></input> </br>
+                                <input id="usageScenario" type="checkbox"> <span class="input-field"
+                                                                                 title="describe a scenario the app has proven useful for">Usage Scenario</span></br>
+                                <input id="praise" type="checkbox"> <span class="input-field"
+                                                                          title="expresses general appreciation with the app">General Praise</span></br>
+                                <input id="complaint" type="checkbox"> <span class="input-field"
+                                                                             title="expresses general disatisfaction with the app">General Complaint</span></br>
+                                <input id="noise" type="checkbox"> <span class="input-field"
+                                                                         title="For non-english and gibberish symbols">Noise</span></br>
+                                <input id="otherCheck" type="checkbox"> <span
+                                    title="important to have in case we missed something, will help us gain insight"
+                                    class="input-field">Other</span></input> </br> <input id="other"
+                                                                                          type="text"
+                                                                                          class="form-control">
+                            </div>
+                            </br>
+                            <h5 class="sentiment-field-header">Choose the sentiment:</h5>
+                            <ul class="pagination sentiment">
+                                <li><a id="sentiment" name="1">very negative</a></li>
+                                <li><a id="sentiment" name="2">negative</a></li>
+                                <li><a id="sentiment" name="3">Neutral</a></li>
+                                <li><a id="sentiment" name="4">positive</a></li>
+                                <li><a id="sentiment" name="5">very positive</a></li>
+                            </ul>
+                        </div>
 
-			</form>
-		</div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="progress" id="projectProgress">
+                        <div id="bar" class="bar progress-bar progress-striped active"
+                             role="progressbar" style="width: 0%">
+                            <span id="barText"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </form>
+    </div>
 </body>
 </html>
