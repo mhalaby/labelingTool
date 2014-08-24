@@ -9,7 +9,7 @@ from models.Users import User
 class Strat:
     def __init__(self):
         self.review_id = 0
-        self.newSampleSize= 30
+        self.newSampleSize= 650
         self.projects = projects()
 #------------------------------------------------------------------------------ 
        
@@ -45,6 +45,7 @@ class Strat:
         i = 0
         l = [] 
         for key,group in gb:
+            print len(list(group))
             l.append(random.sample(list(group), int(strat[i])))
             i= i+1
         return l
@@ -108,6 +109,6 @@ class Strat:
                 print "review ", rs
                 rating += 1    
 
-#--- users = [User().getUserById(1),User().getUserById(4),User().getUserById(2)]
-#---------------------- Strat().printHelper(Strat().runStratPerProject(users,1))
-# print Strat().aggregate(['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p'],[1,2,3],6)
+users = [User().getUserById(1),User().getUserById(4),User().getUserById(2),User().getUserById(21),User().getUserById(20)]
+Strat().printHelper(Strat().runStratPerProject(users,1))
+#print Strat().aggregate(['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p'],[1,2,3,4,5],6)

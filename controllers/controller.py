@@ -217,6 +217,7 @@ class Controller():
                 l.usage_scenario = 0                
                 l.sentiment = -1
                 l.other = ""
+                l.noise= 0
                 l.project_id = 2
                 l.user_id = 11
                 l.review_id = review.review_id
@@ -244,6 +245,7 @@ class Controller():
                     l.usage_scenario = 0                
                     l.sentiment = -1
                     l.other = ""
+                    l.noise= 0
                     l.project_id = 2
                     counter +=1
                     l.user_id = 10

@@ -1,0 +1,366 @@
+You can&#39;t share folders? How many engineers have you hired? Ugh. 
+complaint	True 
+fshort 	False 
+bug report 	False 
+frequest 	True 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+I can&#39;t view .PNGs without putting them in my favorites. Fix this!!! 
+complaint	False 
+fshort 	False 
+bug report 	True 
+frequest 	False 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+Works great, super reliable, it is the best cloud there is! 
+complaint	False 
+fshort 	False 
+bug report 	False 
+frequest 	False 
+fstrength	False 
+usage 	False 
+praise 	True 
+noise 	False 
+-----------------------------------------------------
+The recent update crashes every time when I tried to view a file on my iPad. It is no longer use able. 
+complaint	False 
+fshort 	True 
+bug report 	True 
+frequest 	False 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+I just downloaded the app and I&#39;ve tried creating an account multiple times now and it says there is an unknown error in creating the account. I&#39;d love to utilize this app, but I can&#39;t. Erg! 
+complaint	False 
+fshort 	False 
+bug report 	True 
+frequest 	False 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+My company made is stop using Dropbox because the files aren&#39;t password protected. I now have to use Wulah, and its slow and clunky. I miss you Dropbox!! Make an option for password protection so I can start using you again. 
+complaint	False 
+fshort 	False 
+bug report 	False 
+frequest 	True 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+Any file size past 15MB has trouble being opened in this app...even on wifi. I&#39;m losing hope that Dropbox will finally make an efficient mobile app for their service. 
+complaint	False 
+fshort 	True 
+bug report 	False 
+frequest 	False 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+I don&#39;t?? like the fact that it keeps pulling my location,?? it should at least take a break till the next time I use the camera. Great app though 
+complaint	False 
+fshort 	True 
+bug report 	False 
+frequest 	False 
+fstrength	False 
+usage 	False 
+praise 	True 
+noise 	False 
+-----------------------------------------------------
+My update is frozen in my iPhone 5 if I uninstall and them reinstall  it will I lost all my pics 
+complaint	False 
+fshort 	False 
+bug report 	True 
+frequest 	False 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+I can no longer access the app after the update. Once at the unlock panel, the number pad doesn&#39;t allow input to unlock. 
+complaint	False 
+fshort 	False 
+bug report 	True 
+frequest 	False 
+fstrength	False 
+usage 	True 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+Great work. Fits really well with iOS 7. 
+complaint	False 
+fshort 	False 
+bug report 	False 
+frequest 	False 
+fstrength	False 
+usage 	False 
+praise 	True 
+noise 	False 
+-----------------------------------------------------
+I think this app is awesome and this whole program altogether! But I mostly use Dropbox for music and it gets kind of annoying that the music doesn&#39;t go in a playlist like in the music app. Can you change that? 
+complaint	False 
+fshort 	False 
+bug report 	False 
+frequest 	True 
+fstrength	False 
+usage 	True 
+praise 	True 
+noise 	False 
+-----------------------------------------------------
+Longtime Dropbox user. Love the app. Thank you for the new PDF viewer! It was the only shortcoming of the app for me. Now it&#39;s perfect! 
+complaint	False 
+fshort 	False 
+bug report 	False 
+frequest 	False 
+fstrength	True 
+usage 	False 
+praise 	True 
+noise 	False 
+-----------------------------------------------------
+I have loved and used Dropbox for a long time. I love the security of storing my most important documents online and the ability to access my content on all my devices. As far as the app goes, however, there are a few bugs that need to be worked out and some features that ought to be added. 
+
+1. The app will often time fail to open a document and needs to be restarted before it will load. It will sometimes even freeze and crash. 
+
+2. In order to open your files on a mobile device, you have to be connected to the internet. You can mark the files you choose as favorites and they can be viewed offline. But you have to mark every file individually, which is impractical because I have thousands of files in folders and subfolders. This wouldn&#39;t be so bad if the app let you make a FOLDER a favorite and all files it contained would automatically be saved onto the device for offline viewing. But such a simple feature is not present. There ought to be an option to have all documents saved on the device and updated via Internet connection (like the computer version). This would especially be good for people who use a mobile device as their primary device; all your content would be immediately available. 
+
+3. If you want to reorganize your files or move documents, you have to do each one individually. Why can&#39;t I select multiple documents and move them together to another location? Once again, a simple feature to add. 
+
+4. There is no option to rename a file or folder, which is an incredible nuisance.
+
+Everybody ought to have this app. It is fantastic. However, there is significant room for improvement. Nonetheless I would recommend Dropbox hands down over and against any of its competitors. In terms of functionality and easy of use, there really is no competition. 
+complaint	False 
+fshort 	False 
+bug report 	True 
+frequest 	True 
+fstrength	False 
+usage 	True 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+There should be a way to share comments on files in drop box. 
+complaint	False 
+fshort 	False 
+bug report 	False 
+frequest 	True 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+Iphone App hasn&#39;t worked in a long while. Pics get stuck in waiting to upload mode. What&#39;s the point of even having this on my phone? There isn&#39;t one. So I&#39;m deleting. I used to love Dropbox. It&#39;s over. It&#39;s not me. It&#39;s you. You&#39;re the one with the issues. 
+complaint	True 
+fshort 	False 
+bug report 	True 
+frequest 	False 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+Why does every app think they need to change to this design? Love the app but really dislike the all-white background. Ugh. Please change back. 
+complaint	False 
+fshort 	True 
+bug report 	False 
+frequest 	False 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+Im on a crappy hotel wifi that goes in and out. Been trying to download a 1gb file for over 2 days now. But for some reason dropbox has not allowed favorited downloads the ability to resume  and instead restarts the download from the beginning every time it fails. It&#39;s almost 2014. We have the technology to RESUME A DOWNLOAD what&#39;s the problem here? 
+complaint	False 
+fshort 	True 
+bug report 	False 
+frequest 	False 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+Constantly crashes after last update. Please fix this version! 
+complaint	False 
+fshort 	False 
+bug report 	True 
+frequest 	False 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+A new PDF viewer that STILL doesn&#39;t show Form data?!? I love Dropbox. I rely on it. But I also rely on Adobe Reader for iPad for the one thing Dropbox still cannot do. 
+complaint	False 
+fshort 	False 
+bug report 	False 
+frequest 	True 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+I would give it 5 stars if it had an option to rename files and folders. Would also be nice if there were a thumbnail viewing option for all folders, like there is for the photos folder/tab. 
+complaint	False 
+fshort 	False 
+bug report 	False 
+frequest 	True 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+It&#39;s an okay, average app. Don&#39;t really like the data limit on it. The compositions app is way better. 
+complaint	False 
+fshort 	True 
+bug report 	False 
+frequest 	False 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+I can&#39;t access my files in dropbox on my iPad. I hasn&#39;t loaded for a month! I use dropbox for PDF files for my college classes! Fix this ASAP 
+complaint	False 
+fshort 	False 
+bug report 	True 
+frequest 	False 
+fstrength	False 
+usage 	True 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+This app is absolutely terrible! It freezes and its not even worth it! My friend has lost important photos because of this app. DON&#39;T GET IT!!!! 
+complaint	True 
+fshort 	False 
+bug report 	False 
+frequest 	False 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+????? ????? ?? ???? 
+complaint	False 
+fshort 	False 
+bug report 	False 
+frequest 	False 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	True 
+-----------------------------------------------------
+Pros
+- fast sync relative to other 3rd-party cloud storage apps
+- can create folders
+- can move/re-order folders
+- highly utilized in other third-party apps
+- can increase storage space for free in free accounts
+
+Cons
+- can reorder items A-Z or &#34;Newest -Oldest&#34;, but not in reverse order. 
+- can&#39;t rename folders
+- no multi-account feature (for those with multiple computers)
+- no loop feature for vids, songs, and slide shows
+- must open file to share (can&#39;t share folders) within app 
+complaint	False 
+fshort 	True 
+bug report 	False 
+frequest 	True 
+fstrength	True 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+Never had a problem with App. It&#39;s great and easy to use. 
+complaint	False 
+fshort 	False 
+bug report 	False 
+frequest 	False 
+fstrength	False 
+usage 	False 
+praise 	True 
+noise 	False 
+-----------------------------------------------------
+i always use it on my mac. hopefully it works best on iPhone. 
+complaint	False 
+fshort 	False 
+bug report 	False 
+frequest 	False 
+fstrength	False 
+usage 	False 
+praise 	True 
+noise 	False 
+-----------------------------------------------------
+Seriously? I keep trying to get to one of my files, but the app keeps crashing for some reason. Please fix this.
+
+Other than that, you&#39;re doing an average job! 
+complaint	False 
+fshort 	True 
+bug report 	True 
+frequest 	False 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+The update has been installing for a week.... 
+complaint	False 
+fshort 	False 
+bug report 	True 
+frequest 	False 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+I miss the old version that had a real scrollbar that I could simply drag down instead of scrolling for miles trying to get where I want to be. And also, I miss when it would bookmark where I was in each document instead of refreshing every single time I exit the document - especially with the new scrollbar. I keep accidentally exiting the document and then I end up scrolling for 10 minutes to get to where I was 
+complaint	False 
+fshort 	True 
+bug report 	False 
+frequest 	True 
+fstrength	False 
+usage 	False 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+Since upgrading on my iPad I haven&#39;t been able to get into my Dropbox App. The iTunes popup repeatedly comes back up no matter how many times you press &#34;Ok&#34;. 
+
+This also means it is impossible to link any newly installed apps to Dropbox as well.
+
+I found a workaround as the only way to to get out of the app once it&#39;s stuck in this loop is to press the iPad sleep button, then swipe the camera as if to take a photo, and then press the home button. This takes you back to the home screen. Unfortunate this has to be done to begin with, PLEASE FIX! 
+complaint	False 
+fshort 	False 
+bug report 	True 
+frequest 	False 
+fstrength	False 
+usage 	True 
+praise 	False 
+noise 	False 
+-----------------------------------------------------
+Great update!!! Wow you guys really made this app so much better!!! Thanks!!!!    Loads so much faster now 
+complaint	False 
+fshort 	False 
+bug report 	False 
+frequest 	False 
+fstrength	True 
+usage 	False 
+praise 	True 
+noise 	False 
+-----------------------------------------------------
+bugCount 12 
+strengthCount 5 
+shortcomingCount 12 
+requestCount 10 
+praiseCount 11 
+complaintCount 5 
+usageCount 5 
+otherCount 1 

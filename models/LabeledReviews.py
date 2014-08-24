@@ -100,6 +100,8 @@ class labeledReview(baseModel.BaseModel):
             return True
         if self.noise == other.noise and self.noise == True and other.noise == True:
             return True
+        if self.usage_scenario == other.usage_scenario and self.usage_scenario == True and other.usage_scenario == True:
+            return True
         if len(str(self.other)) > 1 and len(str(other.other)) > 1:
             return True
         return False

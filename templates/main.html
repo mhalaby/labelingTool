@@ -41,8 +41,17 @@
 			});
 			return false;
 		});
-
+	    var gotoTimer;
         $('button#goTo').bind('click', function() {
+            if(gotoTimer) clearTimeout(gotoTimer);
+			$('button#next').prop('disabled',true);
+            $('button#prev').prop('disabled',true);
+            $('button#goTo').prop('disabled',true);
+			gotoTimer = setTimeout(function(){
+				$('button#next').prop('disabled',false);
+                $('button#prev').prop('disabled',false);
+                $('button#goTo').prop('disabled',false);
+       		},800);
              $.getJSON('/goTo', {
                 review_idx : $("#review_idx").val()
              }, function(data) {
@@ -65,9 +74,15 @@
 		$('button#next').bind('click', function() {
 			if(nexttimer) clearTimeout(nexttimer);
 			$('button#next').prop('disabled',true);
+            $('button#prev').prop('disabled',true);
+            $('button#goTo').prop('disabled',true);
+
 			nexttimer = setTimeout(function(){
 				$('button#next').prop('disabled',false);
-		
+                $('button#prev').prop('disabled',false);
+                $('button#goTo').prop('disabled',false);
+
+       		},1000);
 				if($("#bar").width() >= $("#projectProgress").width())
 					return false;
 				$.getJSON('/next', {
@@ -85,16 +100,20 @@
 					if(update(data)){
 						addStep(data.numberOfReviewsPerProject)
 						setProgressBar("#baroverall",".overall", data.totalNumberOfOverallReviews,data.totalNumberOfDoneReviews,10);				}
-				});}
-			,1000);
+				});
 			return false;
 		});
 		var prevtimer;
 		$('button#prev').bind('click', function() {
 			$('button#prev').prop('disabled',true);
+			$('button#next').prop('disabled',true);
+            $('button#goTo').prop('disabled',true);
 			if(prevtimer) clearTimeout(prevtimer);
 			prevtimer = setTimeout(function(){
 				$('button#prev').prop('disabled',false);
+				$('button#next').prop('disabled',false);
+                $('button#goTo').prop('disabled',false);
+				},1000);
 				if($("#bar").width() <= 0)
 					return false;
 				$.getJSON('/prev', {
@@ -113,7 +132,7 @@
 						subStep(data.numberOfReviewsPerProject);
 						setProgressBar("#baroverall",".overall", data.totalNumberOfOverallReviews,data.totalNumberOfDoneReviews,10);				
 					}
-				})},1000);
+				})
 			return false;
 		});
 		$('a#sentiment').bind(
@@ -322,7 +341,7 @@
                                     <span class="glyphicon glyphicon-chevron-right"></span>
                                 </button>
                                 <div class="input-group">
-                                    <input id="review_idx" type="number" class="form-control" style= "width:24%; float: right;">
+                                    <input id="review_idx" type="number" class="form-control" style= "width:40%; float: right;">
                                      <span class="input-group-btn">
                                         <button id="goTo" class="btn btn-default" title= "Go to a labelled review only" type="button"><span
                                                 class="glyphicon glyphicon-search"> Go!</span>

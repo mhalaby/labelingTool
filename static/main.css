@@ -1,5 +1,7 @@
 .comment {
 	height: 250px;
+	overflow-y: auto;
+}
 }
 
 .input-field {
