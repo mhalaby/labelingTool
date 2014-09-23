@@ -43,7 +43,7 @@ def checkMultiLabel(reviews1,reviews2,idx):
     usageCount = 0
     noiseCount = 0
     otherCount = 0
-    # g = open('Results_user_'+str(user2Id)+".txt", 'w')
+    g = open('Results_user_'+str(user2Id)+".txt", 'w')
     for i in idx:
         r2[i].user_id = 0
         r1[i].user_id = 0
@@ -101,25 +101,25 @@ def checkMultiLabel(reviews1,reviews2,idx):
             if r1[i].other == 1 or r2[i].other == 1:
                 otherCount +=1
         
-    #     g.write("%s \n" %r2[i].review.comment)
-    #     g.write( "complaint\t%s \n" % ( r2[i].complaint))
-    #     g.write( "fshort \t%s \n" % (  r2[i].feature_shortcoming))
-    #     g.write( "bug report \t%s \n" %( r2[i].bug_report))
-    #     g.write( "frequest \t%s \n"%(r2[i].feature_request))
-    #     g.write( "fstrength\t%s \n"%(   r2[i].feature_feedback))
-    #     g.write( "usage \t%s \n"%( r2[i].usage_scenario))
-    #     g.write( "praise \t%s \n"%( r2[i].praise))
-    #     g.write( "noise \t%s \n" %(r2[i].noise))
-    #     g.write( "-----------------------------------------------------\n")
-    # g.write( "bugCount %s \n" %(bugCount))
-    # g.write( "strengthCount %s \n"%(strengthCount))
-    # g.write( "shortcomingCount %s \n" %(shortcomingCount))
-    # g.write( "requestCount %s \n" %(requestCount))
-    # g.write( "praiseCount %s \n" %(praiseCount))
-    # g.write( "complaintCount %s \n" %(complaintCount))
-    # g.write( "usageCount %s \n"%(usageCount))
-    # g.write( "otherCount %s \n" %(otherCount))
-    # g.close()
+        g.write("%s \n" %r2[i].review.comment)
+        g.write( "complaint\t%s \n" % ( r2[i].complaint))
+        g.write( "fshort \t%s \n" % (  r2[i].feature_shortcoming))
+        g.write( "bug report \t%s \n" %( r2[i].bug_report))
+        g.write( "frequest \t%s \n"%(r2[i].feature_request))
+        g.write( "fstrength\t%s \n"%(   r2[i].feature_feedback))
+        g.write( "usage \t%s \n"%( r2[i].usage_scenario))
+        g.write( "praise \t%s \n"%( r2[i].praise))
+        g.write( "noise \t%s \n" %(r2[i].noise))
+        g.write( "-----------------------------------------------------\n")
+    g.write( "bugCount %s \n" %(bugCount))
+    g.write( "strengthCount %s \n"%(strengthCount))
+    g.write( "shortcomingCount %s \n" %(shortcomingCount))
+    g.write( "requestCount %s \n" %(requestCount))
+    g.write( "praiseCount %s \n" %(praiseCount))
+    g.write( "complaintCount %s \n" %(complaintCount))
+    g.write( "usageCount %s \n"%(usageCount))
+    g.write( "otherCount %s \n" %(otherCount))
+    g.close()
     print "number of agreement without sentiment", count
     print "number of partial agreement without sentiment", mcount
     print "percentage ", round((float(count) / float(len(reviews1))) * 100, 2)
@@ -156,16 +156,31 @@ def convertToDict(reviews):
         ids.add(r.review_id)
     return rdict,ids
 
+
+def aggreementTest():
+    l1 = list(l.review_id for l in labeledReview().getLabeledReviewsByUserId(10,2) if l.review.stars == 1)
+    l2 = list(l.review_id for l in labeledReview().getLabeledReviewsByUserId(13,2) if l.review.stars == 1)
+    l3 = list(l.review_id for l in labeledReview().getLabeledReviewsByUserId(21,2) if l.review.stars == 1)
+    l4 = list(l.review_id for l in labeledReview().getLabeledReviewsByUserId(22,2) if l.review.stars == 1)
+    l5 = list(l.review_id for l in labeledReview().getLabeledReviewsByUserId(24,2) if l.review.stars == 1)
+    print len(l2)
+    print len(set(l1+l2+l3))
+    print list(set(l3).intersection(set(l5)))
+    print "---------------"
+    print list(set(l3).intersection(set(l4)))
+    print l3
+
 if __name__ == "__main__":
-    user1Id = 13
-    user2Id = 22
-    reviews1 = labeledReview()
+    user1Id = 11
+    user2Id = 30
+    # reviews1 = labeledReview()
     reviews1,ids1 = convertToDict(labeledReview().getAllLabeledReviewsByUserId(user1Id))
     reviews2,ids2 = convertToDict(labeledReview().getAllLabeledReviewsByUserId(user2Id))
-
+    #
     idx = ids1.intersection(ids2)
     strictAggreement(reviews1,reviews2,idx)
     checkMultiLabel(reviews1,reviews2,idx)
     print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
     checkSentimentAgreement(reviews1,reviews2,idx)
     print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+
